@@ -3,6 +3,7 @@ import {
   UserActivityItem, SubscriptionTransactionItem 
 } from '../types/prd';
 import { generatePRDDocument } from './aiEngine';
+import { RealDB } from './dbService';
 
 const PRDS_KEY = 'aiprd_prds';
 const USER_KEY = 'aiprd_user_profile';
@@ -300,6 +301,7 @@ export function savePRD(prd: PRDDocument): PRDDocument[] {
     logUserActivity('PRD_GENERATED', `Synthesized PRD Canvas Spec: "${prd.title}"`);
   }
   savePRDs(updated);
+  RealDB.savePRD(prd);
   return updated;
 }
 
@@ -331,6 +333,7 @@ export function getUserProfile(): UserProfile {
 export function saveUserProfile(user: UserProfile): void {
   try {
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    RealDB.saveUser(user);
   } catch (e) {
     console.error('Failed to save UserProfile to localStorage', e);
   }
@@ -391,6 +394,7 @@ export function logUserActivity(type: UserActivityItem['type'], description: str
   const updated = [newItem, ...activities].slice(0, 50);
   try {
     localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(updated));
+    RealDB.logActivity(newItem);
   } catch (e) {
     console.error('Failed to save activities', e);
   }
