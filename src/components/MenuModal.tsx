@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, LayoutDashboard, Sparkles, CreditCard, User, Info, LogOut } from 'lucide-react';
+import { X, LayoutDashboard, Sparkles, CreditCard, User, Info, LogOut, Shield } from 'lucide-react';
 import { UserProfile } from '../types/prd';
 
 interface MenuModalProps {
@@ -192,6 +192,27 @@ export const MenuModal: React.FC<MenuModalProps> = ({
           >
             <Info size={20} color="var(--text-secondary)" />
             About Us
+          </button>
+
+          <button 
+            onClick={() => { onNavigate('admin'); onClose(); }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '14px',
+              padding: '14px 18px',
+              borderRadius: '12px',
+              background: 'transparent',
+              color: 'var(--primary)',
+              fontSize: '16px',
+              fontWeight: 700,
+              textAlign: 'left'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.background = 'var(--primary-light)'}
+            onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+          >
+            <Shield size={20} color="var(--primary)" />
+            Admin Panel
           </button>
 
           <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '8px 0' }} />

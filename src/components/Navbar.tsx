@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Layers, LogOut, ChevronRight, Sun, Moon, Sparkles, Menu, X, 
-  PanelLeftClose, PanelLeft, LayoutDashboard, User 
+  PanelLeftClose, PanelLeft, LayoutDashboard, User, Shield
 } from 'lucide-react';
 import { UserProfile, ThemeMode } from '../types/prd';
 
@@ -43,6 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       case 'upgrade': return 'Upgrade Plan';
       case 'account': return 'Account Settings';
       case 'about': return 'About Platform';
+      case 'admin': return 'Admin Control Panel';
       default: return 'Workspace';
     }
   };
@@ -227,6 +228,32 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <User size={15} color="var(--text-muted)" /> Account & Audit Logs
+                    </button>
+
+                    <button 
+                      onClick={() => { onNavigate('admin'); setShowUserDropdown(false); }} 
+                      style={{ 
+                        width: '100%', 
+                        padding: '9px 12px', 
+                        textAlign: 'left', 
+                        fontSize: '13px', 
+                        borderRadius: '10px', 
+                        color: 'var(--primary)', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        outline: 'none', 
+                        boxShadow: 'none', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        fontWeight: 700,
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--primary-light)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <Shield size={15} color="var(--primary)" /> Admin Control Panel
                     </button>
 
                     <hr style={{ border: 'none', borderTop: '1px solid var(--border-color)', margin: '4px 0' }} />

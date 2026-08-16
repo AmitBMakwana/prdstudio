@@ -51,6 +51,12 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
         { id: 'upgrade', label: 'Upgrade Plan', icon: Sparkles },
         { id: 'account', label: 'Account & Audit', icon: User }
       ]
+    },
+    {
+      group: 'Management',
+      items: [
+        { id: 'admin', label: 'Admin Panel', icon: Shield }
+      ]
     }
   ];
 

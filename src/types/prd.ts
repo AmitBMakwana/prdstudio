@@ -107,6 +107,7 @@ export interface PRDDocument {
 }
 
 export interface UserProfile {
+  id?: string;
   name: string;
   email: string;
   phone: string;
@@ -117,13 +118,17 @@ export interface UserProfile {
   creditsRemaining: number;
   creditsMax: number;
   planValidity: string;
+  role?: 'user' | 'admin';
+  status?: 'Active' | 'Suspended';
+  lastLogin?: string;
 }
 
 export interface UserActivityItem {
   id: string;
-  type: 'PRD_GENERATED' | 'PLAN_UPGRADED' | 'CREDIT_CONSUMED' | 'PROFILE_UPDATED' | 'PRD_DELETED' | 'USER_LOGIN' | 'USER_LOGOUT';
+  type: 'PRD_GENERATED' | 'PLAN_UPGRADED' | 'CREDIT_CONSUMED' | 'PROFILE_UPDATED' | 'PRD_DELETED' | 'USER_LOGIN' | 'USER_LOGOUT' | 'ADMIN_ACTION';
   description: string;
   timestamp: string;
+  userEmail?: string;
 }
 
 export interface SubscriptionTransactionItem {
@@ -146,3 +151,16 @@ export interface PlanTier {
   features: string[];
   isPopular?: boolean;
 }
+
+export interface AdminAnalyticsSummary {
+  totalUsers: number;
+  activeUsers: number;
+  totalPrdsGenerated: number;
+  totalCreditsConsumed: number;
+  totalRevenueINR: number;
+  dailyTrends: { date: string; users: number; prds: number; credits: number }[];
+  planDistribution: { plan: string; count: number; percentage: number }[];
+  topTechStacks: { name: string; count: number; percentage: number }[];
+  recentSystemLogs: UserActivityItem[];
+}
+

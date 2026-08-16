@@ -24,6 +24,7 @@ import { AiToolsPage } from './pages/AiToolsPage';
 import { DocumentationPage } from './pages/DocumentationPage';
 import { LegalPage } from './pages/LegalPage';
 import { HelpPage } from './pages/HelpPage';
+import { AdminPage } from './pages/AdminPage';
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
@@ -117,7 +118,7 @@ export function App() {
     setCurrentPage('landing');
   };
 
-  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about', 'templates', 'aitools', 'docs', 'legal', 'help'].includes(currentPage);
+  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about', 'templates', 'aitools', 'docs', 'legal', 'help', 'admin'].includes(currentPage);
 
   const currentEditorPRD = activePRD || prds[0] || null;
 
@@ -234,6 +235,10 @@ export function App() {
 
               {currentPage === 'help' && (
                 <HelpPage onNavigate={handleNavigate} />
+              )}
+
+              {currentPage === 'admin' && (
+                <AdminPage currentUser={user} onNavigate={handleNavigate} />
               )}
             </main>
           </div>

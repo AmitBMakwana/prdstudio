@@ -8,7 +8,8 @@ export const PROTECTED_ROUTES = [
   'account',
   'templates',
   'aitools',
-  'docs'
+  'docs',
+  'admin'
 ];
 
 export const PUBLIC_ROUTES = [
