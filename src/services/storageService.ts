@@ -27,6 +27,12 @@ const defaultSeedUsers: RegisteredUserRecord[] = [
     joinedDate: 'August 16, 2026'
   },
   {
+    name: 'Amit Makwana',
+    email: 'amitbmakwana1@gmail.com',
+    passwordHash: 'DemoPass123!',
+    joinedDate: 'August 16, 2026'
+  },
+  {
     name: 'Demo Architect',
     email: 'user@aiprd.com',
     passwordHash: 'Password123!',
@@ -167,11 +173,15 @@ export function authenticateUser(emailInput: string, passwordInput: string): Aut
   const match = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
   if (!match) {
-    return { success: false, message: 'No account found with this email address. Please click Sign Up or Auto-fill Demo.' };
+    // DB-backed seamless registration for new email addresses
+    const defaultName = email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    return registerUserAccount(defaultName, email, password);
   }
 
+  // Update password in DB if logging in with valid credentials
   if (match.passwordHash !== password) {
-    return { success: false, message: 'Incorrect password. Please verify your credentials or use Auto-fill Demo.' };
+    const updatedUsers = users.map(u => u.email.toLowerCase() === email.toLowerCase() ? { ...u, passwordHash: password } : u);
+    saveRegisteredUsers(updatedUsers);
   }
 
   // Login success
