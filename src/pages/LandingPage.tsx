@@ -4,6 +4,7 @@ import {
   FileText, Cpu, GitBranch, Palette, Database, Shield, Terminal, Star, Layers,
   Lock, Key, Users, RefreshCw, Copy, CheckSquare, Eye, ExternalLink, HelpCircle
 } from 'lucide-react';
+import { AiToolIcon } from '../components/AiToolIcon';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
@@ -398,9 +399,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onSelectPl
 
           {/* Tool Badges Grid */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '50px' }}>
-            {['Antigravity', 'Claude Code', 'ChatGPT', 'Gemini', 'Cursor', 'Windsurf', 'Lovable', 'Bolt', 'Replit', 'v0', 'Codex', 'Custom AI Tools'].map((tool, idx) => (
-              <span key={idx} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '10px 20px', borderRadius: '14px', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                ⚡ {tool}
+            {['Antigravity', 'Claude Code', 'ChatGPT', 'Gemini', 'Cursor', 'Windsurf', 'Lovable', 'Bolt', 'Replit', 'v0'].map((tool, idx) => (
+              <span key={idx} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '8px 16px', borderRadius: '14px', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <AiToolIcon name={tool} size={16} showBackground={false} /> {tool}
               </span>
             ))}
           </div>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Terminal, Copy, Check, ArrowRight, Code } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { copyToClipboard } from '../services/exportService';
+import { AiToolIcon } from '../components/AiToolIcon';
 
 interface AiToolsPageProps {
   onNavigate: (page: string) => void;
@@ -10,12 +11,16 @@ export const AiToolsPage: React.FC<AiToolsPageProps> = ({ onNavigate }) => {
   const [copiedTool, setCopiedTool] = useState<string | null>(null);
 
   const tools = [
-    { name: 'Antigravity', desc: 'Google Deepmind AI agentic assistant. Accepts Master 1-Prompt build instructions.' },
+    { name: 'Antigravity', desc: 'Google Deepmind autonomous agentic assistant. Accepts Master 1-Prompt build instructions for full-stack execution.' },
     { name: 'Claude Code', desc: 'Anthropic CLI AI agent. Built for terminal-driven full-stack application creation.' },
     { name: 'Cursor IDE', desc: 'AI-first code editor with inline agent execution and multi-file code synthesis.' },
     { name: 'Windsurf', desc: 'Codeium agentic IDE. Executes complex project specifications in real time.' },
     { name: 'ChatGPT Plus', desc: 'OpenAI GPT-4o architecture and full-stack coding prompt runner.' },
-    { name: 'Gemini Advanced', desc: 'Google 1.5 Pro 2M token context window runner for full specification packages.' }
+    { name: 'Gemini Advanced', desc: 'Google 1.5 Pro 2M token context window runner for full specification packages.' },
+    { name: 'Lovable', desc: 'AI web app builder creating full-stack web applications from product specs.' },
+    { name: 'Bolt.new', desc: 'Browser-based AI web builder for fast React & Next.js prototype deployment.' },
+    { name: 'Replit Agent', desc: 'Autonomous coding agent for cloud sandbox creation and database setup.' },
+    { name: 'v0 by Vercel', desc: 'Generative UI system producing Next.js components aligned with DESIGN.md.' }
   ];
 
   const handleCopyPrompt = (name: string) => {
@@ -36,7 +41,7 @@ export const AiToolsPage: React.FC<AiToolsPageProps> = ({ onNavigate }) => {
           Compatible <span className="canvas-title-gradient">AI Coding Tools</span>
         </h1>
         <p className="canvas-subtitle" style={{ maxWidth: '640px', margin: '6px auto 0 auto' }}>
-          "Generate 1-click Master Prompts optimized for your favorite AI coding environments."
+          Generate 1-click Master Prompts optimized for your favorite AI coding environments.
         </p>
       </div>
 
@@ -44,11 +49,9 @@ export const AiToolsPage: React.FC<AiToolsPageProps> = ({ onNavigate }) => {
         {tools.map((t, idx) => (
           <div key={idx} className="canvas-card" style={{ padding: '28px', borderRadius: '20px', cursor: 'default' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Terminal size={20} />
-              </div>
-              <span style={{ fontSize: '11px', fontWeight: 800, color: '#10B981', background: '#D1FAE5', padding: '2px 8px', borderRadius: '10px' }}>
-                ● Compatible
+              <AiToolIcon name={t.name} size={22} />
+              <span style={{ fontSize: '11px', fontWeight: 800, color: '#10B981', background: '#D1FAE5', padding: '2px 10px', borderRadius: '10px' }}>
+                ● Verified Compatible
               </span>
             </div>
 
