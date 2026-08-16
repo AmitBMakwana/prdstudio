@@ -81,7 +81,7 @@ export interface WizardState {
   customColors: CustomColors;
   themeMode: ThemeMode;
   font: string;
-  customFont?: string;
+  projectName?: string;
   projectType: string;
   projectDescription: string;
   guidingNotes?: string;
@@ -121,7 +121,7 @@ export interface UserProfile {
 
 export interface UserActivityItem {
   id: string;
-  type: 'PRD_GENERATED' | 'PLAN_UPGRADED' | 'CREDIT_CONSUMED' | 'PROFILE_UPDATED' | 'PRD_DELETED';
+  type: 'PRD_GENERATED' | 'PLAN_UPGRADED' | 'CREDIT_CONSUMED' | 'PROFILE_UPDATED' | 'PRD_DELETED' | 'USER_LOGIN' | 'USER_LOGOUT';
   description: string;
   timestamp: string;
 }

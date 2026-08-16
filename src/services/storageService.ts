@@ -9,6 +9,30 @@ const USER_KEY = 'aiprd_user_profile';
 const THEME_KEY = 'aiprd_theme_mode';
 const ACTIVITIES_KEY = 'aiprd_activities';
 const TRANSACTIONS_KEY = 'aiprd_transactions';
+const AUTH_TOKEN_KEY = 'aiprd_auth_token';
+const USERS_DB_KEY = 'aiprd_registered_users';
+
+interface RegisteredUserRecord {
+  name: string;
+  email: string;
+  passwordHash: string;
+  joinedDate: string;
+}
+
+const defaultSeedUsers: RegisteredUserRecord[] = [
+  {
+    name: 'Amit Makwana',
+    email: 'amitmakwana1@gmail.com',
+    passwordHash: 'DemoPass123!',
+    joinedDate: 'August 16, 2026'
+  },
+  {
+    name: 'Demo Architect',
+    email: 'user@aiprd.com',
+    passwordHash: 'Password123!',
+    joinedDate: 'August 10, 2026'
+  }
+];
 
 const defaultDemoState: WizardState = {
   step: 6,
@@ -38,7 +62,7 @@ const defaultDemoState: WizardState = {
 
 const defaultUserProfile: UserProfile = {
   name: 'Amit Makwana',
-  email: 'amit.makwana@aiprd.com',
+  email: 'amitmakwana1@gmail.com',
   phone: '+91 98765 43210',
   joinedDate: 'August 10, 2026',
   verified: true,
@@ -58,32 +82,181 @@ const defaultSeedActivities: UserActivityItem[] = [
   },
   {
     id: 'act-100',
-    type: 'PROFILE_UPDATED',
-    description: 'Verified Google OAuth authentication profile',
-    timestamp: 'Aug 10, 2026 • 10:15'
+    type: 'CREDIT_CONSUMED',
+    description: 'Deducted 50 credits for PRD synthesis',
+    timestamp: 'Aug 16, 2026 • 17:40'
   }
 ];
 
 const defaultSeedTransactions: SubscriptionTransactionItem[] = [
   {
-    id: 'txn-101',
-    transactionId: 'TXN-20260810-9182',
-    planName: 'Free Welcome Tier',
-    amountINR: 0,
-    creditsAdded: 50,
+    id: 'tx-201',
+    transactionId: 'TXN_PRD_884920',
+    planName: 'Starter',
+    amountINR: 49,
+    creditsAdded: 150,
+    timestamp: 'Aug 10, 2026 • 14:20',
     status: 'SUCCESS',
-    paymentMethod: 'System Welcome Bonus',
-    timestamp: 'Aug 10, 2026'
+    paymentMethod: 'UPI / Credit Card'
   }
 ];
 
-// --- PRD Document Methods ---
+// --- Validation Utilities ---
+export function isValidEmailFormat(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+}
+
+export function isValidPasswordFormat(password: string): boolean {
+  return Boolean(password && password.trim().length >= 6);
+}
+
+// --- Registered Users Database ---
+function getRegisteredUsers(): RegisteredUserRecord[] {
+  try {
+    const raw = localStorage.getItem(USERS_DB_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error('Failed to read registered users DB', e);
+  }
+  localStorage.setItem(USERS_DB_KEY, JSON.stringify(defaultSeedUsers));
+  return defaultSeedUsers;
+}
+
+function saveRegisteredUsers(users: RegisteredUserRecord[]): void {
+  try {
+    localStorage.setItem(USERS_DB_KEY, JSON.stringify(users));
+  } catch (e) {
+    console.error('Failed to save registered users DB', e);
+  }
+}
+
+// --- Authentication & Session Methods ---
+export function isAuthenticated(): boolean {
+  try {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
+    return Boolean(token && token.trim().length > 0);
+  } catch (e) {
+    return false;
+  }
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  user?: UserProfile;
+  token?: string;
+}
+
+export function authenticateUser(emailInput: string, passwordInput: string): AuthResponse {
+  const email = emailInput.trim();
+  const password = passwordInput.trim();
+
+  if (!isValidEmailFormat(email)) {
+    return { success: false, message: 'Invalid email address format. Example: name@domain.com' };
+  }
+
+  if (!isValidPasswordFormat(password)) {
+    return { success: false, message: 'Password must be at least 6 characters long.' };
+  }
+
+  const users = getRegisteredUsers();
+  const match = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+  if (!match) {
+    return { success: false, message: 'No account found with this email address. Please click Sign Up or Auto-fill Demo.' };
+  }
+
+  if (match.passwordHash !== password) {
+    return { success: false, message: 'Incorrect password. Please verify your credentials or use Auto-fill Demo.' };
+  }
+
+  // Login success
+  return loginUser(match.name, match.email);
+}
+
+export function registerUserAccount(nameInput: string, emailInput: string, passwordInput: string): AuthResponse {
+  const name = nameInput.trim();
+  const email = emailInput.trim();
+  const password = passwordInput.trim();
+
+  if (!name || name.length < 2) {
+    return { success: false, message: 'Please enter your full name (minimum 2 characters).' };
+  }
+
+  if (!isValidEmailFormat(email)) {
+    return { success: false, message: 'Invalid email address format. Example: name@domain.com' };
+  }
+
+  if (!isValidPasswordFormat(password)) {
+    return { success: false, message: 'Password must be at least 6 characters long.' };
+  }
+
+  const users = getRegisteredUsers();
+  const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+
+  if (existing) {
+    return { success: false, message: 'An account with this email address already exists. Please Sign In instead.' };
+  }
+
+  const newUserRecord: RegisteredUserRecord = {
+    name,
+    email,
+    passwordHash: password,
+    joinedDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+  };
+
+  saveRegisteredUsers([...users, newUserRecord]);
+  logUserActivity('USER_LOGIN', `Registered new account: ${email}`);
+
+  return loginUser(name, email);
+}
+
+export function loginUser(name: string, email: string): AuthResponse {
+  const user: UserProfile = {
+    name: name || 'Amit Makwana',
+    email: email || 'amitmakwana1@gmail.com',
+    phone: '+91 98765 43210',
+    joinedDate: 'August 16, 2026',
+    verified: true,
+    avatarLetter: (name || 'A')[0].toUpperCase(),
+    plan: 'Free',
+    creditsRemaining: 50,
+    creditsMax: 50,
+    planValidity: 'September 15, 2026'
+  };
+
+  const token = `prd_tok_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  try {
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } catch (e) {
+    console.error('Failed to save auth token', e);
+  }
+
+  logUserActivity('USER_LOGIN', `Logged in user session: ${user.email}`);
+  return { success: true, user, token };
+}
+
+export function logoutUser(): void {
+  try {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
+  } catch (e) {
+    console.error('Failed to remove auth token', e);
+  }
+  logUserActivity('USER_LOGOUT', 'User signed out from application');
+}
+
+// --- Storage Methods ---
 export function getSavedPRDs(): PRDDocument[] {
   try {
     const data = localStorage.getItem(PRDS_KEY);
     if (data) {
       const parsed = JSON.parse(data);
-      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].sections && Array.isArray(parsed[0].sections)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         return parsed;
       }
     }
@@ -198,21 +371,22 @@ export function getUserActivities(): UserActivityItem[] {
 
 export function logUserActivity(type: UserActivityItem['type'], description: string): void {
   const activities = getUserActivities();
-  const newActivity: UserActivityItem = {
-    id: 'act-' + Date.now(),
+  const nowStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' • ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const newItem: UserActivityItem = {
+    id: `act-${Date.now()}`,
     type,
     description,
-    timestamp: new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+    timestamp: nowStr
   };
-  const updated = [newActivity, ...activities];
+  const updated = [newItem, ...activities].slice(0, 50);
   try {
     localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Failed to save UserActivity', e);
+    console.error('Failed to save activities', e);
   }
 }
 
-// --- Subscription Transaction History Methods ---
+// --- Subscription Transaction History ---
 export function getSubscriptionTransactions(): SubscriptionTransactionItem[] {
   try {
     const data = localStorage.getItem(TRANSACTIONS_KEY);
@@ -220,50 +394,48 @@ export function getSubscriptionTransactions(): SubscriptionTransactionItem[] {
       return JSON.parse(data);
     }
   } catch (e) {
-    console.error('Failed to load Transactions from localStorage', e);
+    console.error('Failed to load transactions', e);
   }
   localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(defaultSeedTransactions));
   return defaultSeedTransactions;
 }
 
 export function logSubscriptionTransaction(planName: string, amountINR: number, creditsAdded: number): void {
-  const transactions = getSubscriptionTransactions();
-  const newTxn: SubscriptionTransactionItem = {
-    id: 'txn-' + Date.now(),
-    transactionId: 'TXN-' + new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, '0') + String(new Date().getDate()).padStart(2, '0') + '-' + Math.floor(1000 + Math.random() * 9000),
+  const txs = getSubscriptionTransactions();
+  const nowStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' • ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const newTx: SubscriptionTransactionItem = {
+    id: `tx-${Date.now()}`,
+    transactionId: `TXN_PRD_${Math.floor(100000 + Math.random() * 900000)}`,
     planName,
     amountINR,
     creditsAdded,
+    timestamp: nowStr,
     status: 'SUCCESS',
-    paymentMethod: 'Stripe / Simulated UPI',
-    timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    paymentMethod: 'UPI / Credit Card'
   };
-  const updated = [newTxn, ...transactions];
+  const updated = [newTx, ...txs];
   try {
     localStorage.setItem(TRANSACTIONS_KEY, JSON.stringify(updated));
   } catch (e) {
-    console.error('Failed to save SubscriptionTransaction', e);
+    console.error('Failed to save transaction', e);
   }
 }
 
-// --- Theme Preference Methods ---
+// --- Theme Methods ---
 export function getSavedTheme(): ThemeMode {
   try {
-    const theme = localStorage.getItem(THEME_KEY);
-    if (theme === 'dark' || theme === 'light' || theme === 'system') {
-      return theme;
-    }
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === 'dark' || saved === 'light') return saved;
   } catch (e) {
-    console.error('Failed to load theme from localStorage', e);
+    console.error('Failed to read theme', e);
   }
   return 'light';
 }
 
 export function saveSavedTheme(theme: ThemeMode): void {
   try {
-    localStorage.setItem(THEME_KEY, JSON.stringify(theme));
-    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(THEME_KEY, theme);
   } catch (e) {
-    console.error('Failed to save theme to localStorage', e);
+    console.error('Failed to save theme', e);
   }
 }

@@ -10,16 +10,18 @@
   --text-muted: #94A3B8;
   --border-color: #E2E8F0;
   --border-hover: #CBD5E1;
-  --primary: #4F46E5;
-  --primary-hover: #4338CA;
-  --primary-light: #EEF2FF;
-  --primary-gradient: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%);
+  --primary: #5B4BFF;
+  --primary-hover: #4938E8;
+  --primary-light: #EEF0FF;
+  --accent-orange: #F28C28;
+  --accent-orange-light: #FFF3E6;
+  --primary-gradient: linear-gradient(135deg, #5B4BFF 0%, #7C3AED 100%);
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.06), 0 0 1px rgba(0, 0, 0, 0.1);
-  --shadow-card-hover: 0 30px 60px -20px rgba(79, 70, 229, 0.12), 0 0 1px rgba(0, 0, 0, 0.15);
-  --radius-lg: 20px;
-  --radius-xl: 28px;
+  --font-sans: 'Inter', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --shadow-card: 0 20px 40px -15px rgba(20, 20, 50, 0.06), 0 0 1px rgba(0, 0, 0, 0.1);
+  --shadow-card-hover: 0 30px 60px -20px rgba(91, 75, 255, 0.15), 0 0 1px rgba(0, 0, 0, 0.15);
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 }
 
 [data-theme='dark'] {
@@ -66,7 +68,7 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -74,12 +76,14 @@ body {
 /* Reference Header Bar */
 .saas-navbar {
   background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 12px 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
 }
 
 [data-theme='dark'] .saas-navbar {
@@ -90,27 +94,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 /* Title Serif Display Styling */
 .canvas-title {
   font-family: var(--font-serif);
-  font-size: clamp(32px, 4vw, 48px);
+  font-size: clamp(38px, 5.5vw, 68px);
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.05;
 }
 
 .canvas-title-gradient {
-  color: #D97706;
+  color: var(--accent-orange);
   font-style: italic;
+  font-family: var(--font-serif);
 }
 
 .canvas-subtitle {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 16px;
+  font-family: var(--font-sans);
+  font-size: 17px;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.65;
 }
 
 /* Vertical Floating Canvas Card (Matching Reference Screenshot) */

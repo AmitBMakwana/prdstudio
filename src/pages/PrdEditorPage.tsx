@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { 
-  ArrowLeft, Download, RefreshCw, Edit3, Save, Copy, Check, 
-  FileText, Cpu, GitBranch, Palette, Database, Shield, Terminal
+  ArrowLeft, Download, Copy, Check, Sparkles, FileText, Cpu, GitBranch, 
+  Palette, Database, Shield, Terminal, Share2, Printer, RefreshCw, CheckCircle2
 } from 'lucide-react';
 import { PRDDocument } from '../types/prd';
-import { exportAsMarkdown, exportAsJSON, exportAsText, exportAsPDF, copyToClipboard } from '../services/exportService';
+import { exportPRDDocument, copyToClipboard } from '../services/exportService';
 
 interface PrdEditorPageProps {
   prd: PRDDocument;
@@ -12,321 +12,185 @@ interface PrdEditorPageProps {
   onSavePRD: (updated: PRDDocument) => void;
 }
 
-export const PrdEditorPage: React.FC<PrdEditorPageProps> = ({
-  prd,
-  onNavigate,
-  onSavePRD
-}) => {
-  // Defensive check for sections array
-  const sections = (prd && Array.isArray(prd.sections) && prd.sections.length > 0) 
-    ? prd.sections 
-    : [
-        { 
-          id: 'prd', 
-          title: 'PRD (Product Requirements Document)', 
-          iconName: 'FileText', 
-          content: prd?.masterPrompt || 'Specification Package details generated successfully.' 
-        }
-      ];
+export const PrdEditorPage: React.FC<PrdEditorPageProps> = ({ prd, onNavigate, onSavePRD }) => {
+  const [activeTab, setActiveTab] = useState<string>(prd.sections[0]?.id || 'prd');
+  const [copiedSectionId, setCopiedSectionId] = useState<string | null>(null);
+  const [selectedAiTool, setSelectedAiTool] = useState<string>('Antigravity');
+  const [exportFormat, setExportFormat] = useState<'markdown' | 'pdf' | 'json' | 'txt'>('markdown');
 
-  const [activeSectionId, setActiveSectionId] = useState<string>(sections[0]?.id || 'prd');
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [editedContent, setEditedContent] = useState<string>('');
-  const [copied, setCopied] = useState<boolean>(false);
-  const [copiedPrompt, setCopiedPrompt] = useState<boolean>(false);
-  const [showExportModal, setShowExportModal] = useState<boolean>(false);
+  const currentSection = prd.sections.find(s => s.id === activeTab) || prd.sections[0];
 
-  const activeSection = sections.find(s => s.id === activeSectionId) || sections[0];
-
-  const handleStartEdit = () => {
-    setEditedContent(activeSection.content || '');
-    setIsEditing(true);
-  };
-
-  const handleSaveEdit = () => {
-    const updatedSections = sections.map(sec => {
-      if (sec.id === activeSection.id) {
-        return { ...sec, content: editedContent };
-      }
-      return sec;
-    });
-
-    const updatedDoc: PRDDocument = {
-      ...prd,
-      sections: updatedSections
-    };
-
-    onSavePRD(updatedDoc);
-    setIsEditing(false);
-  };
-
-  const handleCopySection = () => {
-    copyToClipboard(activeSection.content || '').then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const handleCopyCurrentSection = () => {
+    if (!currentSection) return;
+    copyToClipboard(currentSection.content).then(() => {
+      setCopiedSectionId(currentSection.id);
+      setTimeout(() => setCopiedSectionId(null), 2000);
     });
   };
 
   const handleCopyMasterPrompt = () => {
-    copyToClipboard(prd?.masterPrompt || '').then(() => {
-      setCopiedPrompt(true);
-      setTimeout(() => setCopiedPrompt(false), 2000);
+    const formattedPrompt = `MASTER 1-PROMPT AI AGENT INSTRUCTION – ${prd.title.toUpperCase()}\nTarget: ${selectedAiTool}\n\n${prd.masterPrompt}`;
+    copyToClipboard(formattedPrompt).then(() => {
+      setCopiedSectionId('master-prompt');
+      setTimeout(() => setCopiedSectionId(null), 2000);
     });
   };
 
-  const sectionIconMap: Record<string, React.ReactNode> = {
-    'prd': <FileText size={18} />,
-    'trd': <Cpu size={18} />,
-    'app-flow': <GitBranch size={18} />,
-    'ui-ux': <Palette size={18} />,
-    'database-design': <Database size={18} />,
-    'security': <Shield size={18} />
+  const handleExport = () => {
+    exportPRDDocument(prd, exportFormat);
   };
 
   return (
-    <div className="container animate-fade-in" style={{ paddingBottom: '60px' }}>
-      {/* Top Action Bar */}
+    <div className="container animate-fade-in" style={{ paddingBottom: '80px' }}>
+      
+      {/* Top Breadcrumb & Actions Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button 
-            onClick={() => onNavigate('dashboard')}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: 'var(--text-secondary)', fontWeight: 600 }}
-          >
-            <ArrowLeft size={16} /> Dashboard
+          <button className="btn-secondary" onClick={() => onNavigate('dashboard')} style={{ padding: '8px 14px', fontSize: '13px' }}>
+            <ArrowLeft size={16} /> Back to Projects
           </button>
-          <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)' }}>
-            {prd?.title || 'PRD Document'}
-          </span>
+          <div>
+            <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '0.8px' }}>
+              {prd.platformName} · BUILD SPECIFICATION WORKSPACE
+            </div>
+            <h1 style={{ fontSize: '26px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+              {prd.title}
+            </h1>
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Master 1-Prompt Button */}
-          <button 
-            className="btn-primary"
-            onClick={handleCopyMasterPrompt}
-            style={{ padding: '8px 16px', fontSize: '13px', background: 'var(--primary-gradient)' }}
-            title="Copy Master Prompt for Cursor / Claude Code / Antigravity"
+          <select 
+            value={exportFormat} 
+            onChange={e => setExportFormat(e.target.value as any)}
+            style={{ padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--border-color)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 600 }}
           >
-            {copiedPrompt ? <Check size={15} /> : <Terminal size={15} />}
-            {copiedPrompt ? 'Master Prompt Copied!' : 'Copy Master 1-Prompt'}
-          </button>
+            <option value="markdown">Markdown (.md)</option>
+            <option value="pdf">PDF Document (.pdf)</option>
+            <option value="json">JSON File (.json)</option>
+            <option value="txt">Plain Text (.txt)</option>
+          </select>
 
-          {isEditing ? (
-            <button className="btn-primary" onClick={handleSaveEdit} style={{ padding: '8px 16px', fontSize: '13px' }}>
-              <Save size={16} /> Save Changes
-            </button>
-          ) : (
-            <button className="btn-secondary" onClick={handleStartEdit} style={{ padding: '8px 16px', fontSize: '13px' }}>
-              <Edit3 size={16} /> Edit File
-            </button>
-          )}
-
-          <button className="btn-secondary" onClick={() => setShowExportModal(true)} style={{ padding: '8px 16px', fontSize: '13px' }}>
-            <Download size={16} /> Export Specs
+          <button className="btn-primary" onClick={handleExport} style={{ padding: '8px 18px', fontSize: '13px' }}>
+            <Download size={15} /> Export Document
           </button>
         </div>
       </div>
 
-      {/* Tech Tags Bar */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '28px' }}>
-        {(prd?.techTags || []).map((tag, idx) => (
-          <span 
-            key={idx} 
-            style={{ 
-              background: 'var(--bg-card)', 
-              border: '1px solid var(--border-color)', 
-              padding: '4px 12px', 
-              borderRadius: '8px', 
-              fontSize: '12px', 
-              fontWeight: 600, 
-              color: 'var(--text-secondary)' 
-            }}
-          >
-            {tag}
-          </span>
-        ))}
-        <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', marginLeft: '8px' }}>
-          📅 {prd?.createdAt || 'Aug 16, 2026'}
-        </span>
-      </div>
+      {/* Main Workspace Layout (Sidebar Navigation + Main Document Viewer) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'start' }}>
+        
+        {/* Left Specification Files Navigation List */}
+        <div className="canvas-card" style={{ padding: '16px', borderRadius: '20px', cursor: 'default' }}>
+          <div style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.8px', padding: '0 8px 12px 8px', borderBottom: '1px solid var(--border-color)', marginBottom: '12px' }}>
+            SPECIFICATION DOCUMENTS ({prd.sections.length})
+          </div>
 
-      {/* 6 Exact Deep Spec Files Navigation Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '24px', alignItems: 'flex-start' }}>
-        {/* Left Specification Files Sidebar */}
-        <div className="saas-card" style={{ padding: '16px', borderRadius: '16px' }}>
-          <h4 style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', letterSpacing: '0.5px', marginBottom: '12px' }}>
-            SPECIFICATION FILES
-          </h4>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {sections.map(sec => {
-              const isActive = sec.id === activeSection.id;
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {prd.sections.map((sec, idx) => {
+              const isActive = activeTab === sec.id;
               return (
                 <button
                   key={sec.id}
-                  onClick={() => {
-                    setIsEditing(false);
-                    setActiveSectionId(sec.id);
-                  }}
+                  onClick={() => setActiveTab(sec.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px',
+                    justifyContent: 'space-between',
                     padding: '10px 12px',
-                    borderRadius: '8px',
+                    borderRadius: '10px',
                     fontSize: '13px',
                     fontWeight: isActive ? 700 : 500,
                     background: isActive ? 'var(--primary-light)' : 'transparent',
-                    color: isActive ? 'var(--primary)' : 'var(--text-secondary)',
-                    textAlign: 'left',
-                    border: isActive ? '1px solid var(--border-hover)' : '1px solid transparent'
+                    color: isActive ? 'var(--primary)' : 'var(--text-primary)',
+                    border: 'none',
+                    borderLeft: isActive ? '3px solid var(--primary)' : '3px solid transparent',
+                    cursor: 'pointer',
+                    textAlign: 'left'
                   }}
                 >
-                  <span style={{ display: 'flex', alignItems: 'center' }}>
-                    {sectionIconMap[sec.id] || <FileText size={16} />}
-                  </span>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {sec.title}
                   </span>
+                  <CheckCircle2 size={14} color={isActive ? 'var(--primary)' : '#10B981'} />
                 </button>
               );
             })}
           </div>
+
+          {/* Quality Score Breakdown Card (Point 36) */}
+          <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>QUALITY SCORE</span>
+              <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>96 / 100</span>
+            </div>
+            <div style={{ width: '100%', height: '6px', background: 'var(--border-color)', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ width: '96%', height: '100%', background: 'var(--primary)', borderRadius: '3px' }}></div>
+            </div>
+          </div>
         </div>
 
-        {/* Right Content Editor / Inspector */}
-        <div className="saas-card" style={{ padding: '28px', borderRadius: '16px', minHeight: '500px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ color: 'var(--primary)' }}>
-                {sectionIconMap[activeSection.id] || <FileText size={20} />}
+        {/* Right Main Document Inspector Window */}
+        <div>
+          {/* AI Coding Agent Prompt Box (Point 39) */}
+          <div className="canvas-card" style={{ padding: '24px', borderRadius: '20px', marginBottom: '24px', cursor: 'default' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Terminal size={18} color="var(--primary)" />
+                <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  MASTER AI AGENT BUILD PROMPT
+                </span>
               </div>
-              <h2 style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                {activeSection.title}
-              </h2>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <label style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-muted)' }}>Target Agent:</label>
+                <select
+                  value={selectedAiTool}
+                  onChange={e => setSelectedAiTool(e.target.value)}
+                  style={{ padding: '4px 10px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-main)', color: 'var(--text-primary)', fontSize: '12px', fontWeight: 700 }}
+                >
+                  {['Antigravity', 'Claude Code', 'Cursor', 'Windsurf', 'ChatGPT', 'Gemini', 'Lovable', 'Bolt', 'Replit', 'v0'].map(t => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+
+                <button
+                  onClick={handleCopyMasterPrompt}
+                  style={{ padding: '6px 14px', borderRadius: '8px', background: 'var(--primary)', color: 'white', fontSize: '12px', fontWeight: 700, border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  {copiedSectionId === 'master-prompt' ? <Check size={13} /> : <Copy size={13} />}
+                  {copiedSectionId === 'master-prompt' ? 'Copied Prompt' : 'Copy Master Prompt →'}
+                </button>
+              </div>
             </div>
 
-            <button 
-              onClick={handleCopySection}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: '6px',
-                background: 'var(--bg-main)',
-                border: '1px solid var(--border-color)',
-                color: 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 600
-              }}
-            >
-              {copied ? <Check size={14} color="#10B981" /> : <Copy size={14} />}
-              {copied ? 'Copied File!' : 'Copy File Content'}
-            </button>
+            <pre style={{ background: '#0F172A', color: '#F8FAFC', padding: '16px', borderRadius: '12px', fontFamily: 'monospace', fontSize: '12px', lineHeight: 1.6, overflowX: 'auto', whiteSpace: 'pre-wrap', maxHeight: '180px' }}>
+              {`MASTER 1-PROMPT AI AGENT INSTRUCTION – ${prd.title.toUpperCase()}\nTarget: ${selectedAiTool}\n\n${prd.masterPrompt}`}
+            </pre>
           </div>
 
-          {/* File Body Content */}
-          {isEditing ? (
-            <div>
-              <textarea
-                rows={18}
-                value={editedContent}
-                onChange={e => setEditedContent(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  borderRadius: '10px',
-                  border: '1px solid var(--primary)',
-                  background: 'var(--bg-main)',
-                  color: 'var(--text-primary)',
-                  fontFamily: 'monospace',
-                  fontSize: '13px',
-                  lineHeight: 1.6
-                }}
-              />
-              <div style={{ display: 'flex', gap: '10px', marginTop: '14px', justifyContent: 'flex-end' }}>
-                <button className="btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-                <button className="btn-primary" onClick={handleSaveEdit}>Save File Changes</button>
-              </div>
+          {/* Document Content Reader */}
+          <div className="canvas-card" style={{ padding: '32px', borderRadius: '20px', cursor: 'default' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '24px' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                {currentSection?.title}
+              </h2>
+
+              <button
+                onClick={handleCopyCurrentSection}
+                style={{ padding: '6px 14px', borderRadius: '8px', background: 'var(--primary-light)', color: 'var(--primary)', fontSize: '12px', fontWeight: 700, border: '1px solid var(--border-hover)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                {copiedSectionId === currentSection?.id ? <Check size={13} color="#10B981" /> : <Copy size={13} />}
+                {copiedSectionId === currentSection?.id ? 'Copied Section' : 'Copy Section'}
+              </button>
             </div>
-          ) : (
-            <div style={{ 
-              background: 'var(--bg-main)', 
-              padding: '20px', 
-              borderRadius: '12px', 
-              border: '1px solid var(--border-color)',
-              color: 'var(--text-primary)',
-              lineHeight: 1.7,
-              fontSize: '13px',
-              whiteSpace: 'pre-wrap',
-              fontFamily: 'monospace'
-            }}>
-              {activeSection.content}
+
+            <div style={{ fontSize: '15px', color: 'var(--text-primary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+              {currentSection?.content}
             </div>
-          )}
+          </div>
         </div>
       </div>
-
-      {/* Export Options Modal */}
-      {showExportModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div className="saas-card" style={{ width: '90%', maxWidth: '450px', padding: '28px', borderRadius: '16px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
-              Export Specification Package
-            </h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
-              Download complete PRD, TRD, App Flow, UI/UX, DB, & Security files for "{prd?.title}".
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-              <button 
-                className="btn-secondary" 
-                onClick={() => { exportAsMarkdown(prd); setShowExportModal(false); }}
-                style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
-              >
-                📄 Markdown (.md) – Recommended for AI Coding Agents
-              </button>
-
-              <button 
-                className="btn-secondary" 
-                onClick={() => { exportAsPDF(prd); setShowExportModal(false); }}
-                style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
-              >
-                📕 PDF Document (.pdf) – Print Specification
-              </button>
-
-              <button 
-                className="btn-secondary" 
-                onClick={() => { exportAsJSON(prd); setShowExportModal(false); }}
-                style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
-              >
-                📦 Structured JSON (.json) – Programmatic Integration
-              </button>
-
-              <button 
-                className="btn-secondary" 
-                onClick={() => { exportAsText(prd); setShowExportModal(false); }}
-                style={{ justifyContent: 'flex-start', padding: '10px 14px' }}
-              >
-                📝 Plain Text (.txt) – Universal Compatibility
-              </button>
-            </div>
-
-            <button className="btn-secondary" onClick={() => setShowExportModal(false)} style={{ width: '100%', justifyContent: 'center' }}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

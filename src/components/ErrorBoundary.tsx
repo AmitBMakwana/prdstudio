@@ -1,115 +1,91 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle, RefreshCw, Copy, Check, ShieldAlert } from 'lucide-react';
+import { logError, getSystemLogs } from '../services/loggerService';
+import { copyToClipboard } from '../services/exportService';
 
-interface Props {
+interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-interface State {
+interface ErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+  copiedLog: boolean;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  public state: State = {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
     hasError: false,
     error: null,
-    errorInfo: null
+    errorInfo: null,
+    copiedLog: false
   };
 
-  public static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error, errorInfo: null };
+  public static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    return { hasError: true, error };
   }
 
-  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("React ErrorBoundary caught an unhandled error:", error, errorInfo);
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     this.setState({ errorInfo });
+    logError('ErrorBoundaryComponent', error, { componentStack: errorInfo.componentStack });
   }
 
-  public handleReload = () => {
-    localStorage.removeItem('aiprd_prds'); // Reset cached PRDs if corrupt
-    window.location.href = '/';
+  private handleReset = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null });
+    window.location.reload();
+  };
+
+  private handleCopyDiagnostics = () => {
+    const logs = getSystemLogs();
+    const payload = JSON.stringify({
+      error: this.state.error?.message,
+      stack: this.state.error?.stack,
+      componentStack: this.state.errorInfo?.componentStack,
+      systemLogs: logs.slice(0, 10)
+    }, null, 2);
+
+    copyToClipboard(payload).then(() => {
+      this.setState({ copiedLog: true });
+      setTimeout(() => this.setState({ copiedLog: false }), 2000);
+    });
   };
 
   public render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'var(--bg-main, #F8FAFC)',
-          color: 'var(--text-primary, #0F172A)',
-          padding: '24px',
-          fontFamily: 'sans-serif'
-        }}>
-          <div style={{
-            maxWidth: '560px',
-            width: '100%',
-            background: 'var(--bg-card, #FFFFFF)',
-            padding: '36px',
-            borderRadius: '24px',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-            border: '1px solid var(--border-color, #E2E8F0)',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              background: '#FEE2E2',
-              color: '#DC2626',
-              fontSize: '28px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 20px auto'
-            }}>
-              ⚠️
+        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', background: 'var(--bg-main)' }}>
+          <div className="canvas-card" style={{ maxWidth: '640px', width: '100%', padding: '40px', borderRadius: '24px', textAlign: 'center', cursor: 'default' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#FEF2F2', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
+              <AlertTriangle size={28} />
             </div>
 
-            <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '10px' }}>
-              Unexpected State Recovery
+            <h2 style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              Application Exception Caught
             </h2>
-
-            <p style={{ fontSize: '14px', color: '#64748B', lineHeight: 1.6, marginBottom: '24px' }}>
-              The application encountered a temporary layout conflict while rendering. Click below to recover your workspace instantly.
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.5 }}>
+              PRD Studio encountered an unexpected runtime exception. The error has been captured in the system diagnostic logs.
             </p>
 
-            {this.state.error && (
-              <div style={{
-                background: '#F1F5F9',
-                padding: '12px 16px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontFamily: 'monospace',
-                color: '#475569',
-                textAlign: 'left',
-                marginBottom: '24px',
-                overflowX: 'auto'
-              }}>
-                {this.state.error.toString()}
-              </div>
-            )}
+            <div style={{ background: '#0F172A', color: '#F8FAFC', padding: '16px', borderRadius: '12px', textAlign: 'left', fontFamily: 'monospace', fontSize: '12px', lineHeight: 1.6, overflowX: 'auto', marginBottom: '24px', maxHeight: '180px' }}>
+              <strong>Error:</strong> {this.state.error?.message || 'Unknown Exception'}
+              <br /><br />
+              <strong>Stack Trace:</strong>
+              <pre style={{ margin: 0, opacity: 0.8, whiteSpace: 'pre-wrap' }}>
+                {this.state.error?.stack || this.state.errorInfo?.componentStack || 'No stack trace available.'}
+              </pre>
+            </div>
 
-            <button
-              onClick={this.handleReload}
-              style={{
-                background: 'linear-gradient(135deg, #4F46E5 0%, #6366F1 100%)',
-                color: 'white',
-                border: 'none',
-                fontWeight: 700,
-                fontSize: '14px',
-                padding: '12px 28px',
-                borderRadius: '14px',
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
-              }}
-            >
-              Reset Cache & Recover Workspace
-            </button>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn-primary" onClick={this.handleReset} style={{ padding: '10px 20px', fontSize: '13px' }}>
+                <RefreshCw size={15} /> Reload Application
+              </button>
+
+              <button className="btn-secondary" onClick={this.handleCopyDiagnostics} style={{ padding: '10px 20px', fontSize: '13px' }}>
+                {this.state.copiedLog ? <Check size={15} color="#10B981" /> : <Copy size={15} />}
+                {this.state.copiedLog ? 'Diagnostics Copied!' : 'Copy Error Diagnostics'}
+              </button>
+            </div>
           </div>
         </div>
       );

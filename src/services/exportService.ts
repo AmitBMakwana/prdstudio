@@ -16,7 +16,6 @@ export function exportAsText(prd: PRDDocument): void {
 }
 
 export function exportAsPDF(prd: PRDDocument): void {
-  // Triggers print dialog formatted specifically for clean PDF save
   const printWindow = window.open('', '_blank');
   if (!printWindow) return;
 
@@ -34,9 +33,9 @@ export function exportAsPDF(prd: PRDDocument): void {
         <title>${escapeHTML(prd.title)} - Product Requirements Document</title>
         <style>
           body { font-family: 'Inter', sans-serif; padding: 40px; color: #0F172A; max-width: 800px; margin: 0 auto; line-height: 1.6; }
-          h1 { color: #2563EB; font-size: 24px; border-bottom: 2px solid #E2E8F0; padding-bottom: 12px; }
+          h1 { color: #5B4BFF; font-size: 24px; border-bottom: 2px solid #E2E8F0; padding-bottom: 12px; }
           .meta { font-size: 13px; color: #64748B; margin-bottom: 30px; }
-          .badge { background: #EFF6FF; color: #2563EB; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px; margin-right: 6px; }
+          .badge { background: #EEF0FF; color: #5B4BFF; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px; margin-right: 6px; }
           .section { margin-bottom: 32px; page-break-inside: avoid; }
           h2 { font-size: 18px; color: #1E293B; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; margin-bottom: 12px; }
           pre { background: #F8FAFC; padding: 16px; border-radius: 8px; border: 1px solid #E2E8F0; white-space: pre-wrap; font-family: inherit; font-size: 13px; color: #334155; }
@@ -58,6 +57,13 @@ export function exportAsPDF(prd: PRDDocument): void {
     </html>
   `);
   printWindow.document.close();
+}
+
+export function exportPRDDocument(prd: PRDDocument, format: 'markdown' | 'pdf' | 'json' | 'txt' = 'markdown'): void {
+  if (format === 'pdf') exportAsPDF(prd);
+  else if (format === 'json') exportAsJSON(prd);
+  else if (format === 'txt') exportAsText(prd);
+  else exportAsMarkdown(prd);
 }
 
 export function copyToClipboard(text: string): Promise<void> {

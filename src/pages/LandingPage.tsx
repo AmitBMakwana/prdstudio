@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  Sparkles, ArrowRight, CheckCircle2, ChevronDown, ChevronUp, Zap, Code, Layout, Cpu, 
-  Terminal, ShieldCheck, Database, Layers, Check, FileText, CheckCircle
+  Sparkles, ArrowRight, Check, CheckCircle2, ChevronDown, ChevronUp, Zap, 
+  FileText, Cpu, GitBranch, Palette, Database, Shield, Terminal, Star, Layers,
+  Lock, Key, Users, RefreshCw, Copy, CheckSquare, Eye, ExternalLink, HelpCircle
 } from 'lucide-react';
-import { PlanTier } from '../types/prd';
 
 interface LandingPageProps {
   onNavigate: (page: string) => void;
@@ -11,335 +11,665 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onSelectPlan }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'schema' | 'api' | 'prompt'>('overview');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [copiedPrompt, setCopiedPrompt] = useState<boolean>(false);
+  const [activeTabPreview, setActiveTabPreview] = useState<string>('prd');
 
-  const pricingPlans: PlanTier[] = [
-    {
-      id: 'free',
-      name: 'Free',
-      priceINR: 0,
-      credits: 50,
-      validityDays: 30,
-      features: ['50 credits included', '1 Complete Developer PRD', 'Next.js + Laravel + MySQL Stack', 'Markdown & PDF export']
-    },
-    {
-      id: 'starter',
-      name: 'Starter',
-      priceINR: 49,
-      credits: 150,
-      validityDays: 30,
-      features: ['150 credits included', '3 Complete Developer PRDs', 'All Tech Stacks & Presets', 'Markdown, PDF, DOCX, JSON export']
-    },
-    {
-      id: 'pro',
-      name: 'Pro',
-      priceINR: 99,
-      credits: 500,
-      validityDays: 30,
-      isPopular: true,
-      features: ['500 credits included', '10 Complete Developer PRDs', 'Google Stitch DESIGN.md System', 'Priority AI Compiler Synthesis']
-    },
-    {
-      id: 'ultimate',
-      name: 'Ultimate',
-      priceINR: 149,
-      credits: 1500,
-      validityDays: 30,
-      features: ['1500 credits included', '30 Complete Developer PRDs', 'Full API Access & Webhooks', 'Dedicated Architecture Support']
-    }
-  ];
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index);
+  };
 
-  const faqs = [
-    {
-      q: 'How does PRD Studio generate developer-ready specs?',
-      a: 'Our structured compiler analyzes your 6 wizard inputs (Platform, Stack, Style, Palette, Font, Description) and synthesizes 10 developer-ready PRD sections: Overview, Features, UI/UX Specs, Next.js/Laravel/MySQL Architecture, DB Schemas, API Routes, Security, QA, DevOps, and Master AI Prompts.'
-    },
-    {
-      q: 'Can I use custom OpenAI, Anthropic, or Gemini API keys?',
-      a: 'Yes! Click the "AI Key" button in the top navigation to enter your own OpenAI key (gpt-4o), Anthropic key (claude-3-5-sonnet), or Gemini key, or use our built-in compiler service.'
-    },
-    {
-      q: 'Which database and backend tech stack is supported?',
-      a: 'We feature Laravel 11 REST API with MySQL (database: aiprd), Next.js, React, Node.js, Python, Supabase, Postgres, and custom tech choices.'
-    },
-    {
-      q: 'What export formats are supported?',
-      a: 'Instant 1-click exports are available for Markdown (.md), PDF Document (.pdf), Structured JSON (.json), and Plain Text (.txt).'
-    }
-  ];
+  const handleCopyDemoPrompt = () => {
+    const promptText = `MASTER 1-PROMPT AI AGENT INSTRUCTION – AI FITNESS COACH\nTarget: Antigravity / Cursor / Claude Code\n\nYou are a senior full-stack engineer. Build the following application according to the provided product specification.\n\nArchitecture: Next.js (Frontend) + Laravel 11 PHP API (Backend) + MySQL (DB: aiprd)\nDesign: Google Stitch DESIGN.md tokens with Playfair Display typography.\nFeatures: 42 Features, 18 Screens, 7 User Roles, 31 Database Tables, 48 API Endpoints.\nSecurity: Sanctum token auth, bcrypt hashing, XSS & SQL injection controls.`;
+    navigator.clipboard.writeText(promptText).then(() => {
+      setCopiedPrompt(true);
+      setTimeout(() => setCopiedPrompt(false), 2000);
+    });
+  };
 
   return (
-    <div className="animate-fade-in" style={{ paddingBottom: '60px' }}>
-      {/* Clean Production Hero */}
-      <section style={{ textAlign: 'center', padding: '70px 20px 50px 20px', maxWidth: '960px', margin: '0 auto' }}>
-        <div style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          gap: '8px', 
-          background: 'var(--primary-light)', 
-          color: 'var(--primary)', 
-          padding: '6px 16px', 
-          borderRadius: '20px', 
-          fontSize: '13px', 
-          fontWeight: 600,
-          marginBottom: '20px',
-          border: '1px solid rgba(37, 99, 235, 0.2)'
-        }}>
-          <Sparkles size={14} /> AI-Powered PRD Generation for Engineering Teams
+    <div className="animate-fade-in" style={{ paddingBottom: '0', color: 'var(--text-primary)' }}>
+      
+      {/* 5. HERO SECTION */}
+      <section style={{ padding: '100px 20px 60px 20px', textAlign: 'center', position: 'relative' }}>
+        <div className="container" style={{ maxWidth: '1000px' }}>
+          {/* Eyebrow Badge */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'var(--primary-light)',
+            color: 'var(--primary)',
+            padding: '8px 20px',
+            borderRadius: '20px',
+            fontSize: '13px',
+            fontWeight: 800,
+            marginBottom: '28px',
+            border: '1px solid var(--border-hover)',
+            letterSpacing: '0.8px'
+          }}>
+            ✦ AI-POWERED PRODUCT PLANNING
+          </div>
+
+          {/* Main Headline */}
+          <h1 className="canvas-title" style={{ fontSize: 'clamp(44px, 6vw, 72px)', lineHeight: 1.05, marginBottom: '20px' }}>
+            Turn Any Idea Into a Build-Ready PRD. <br />
+            <span className="canvas-title-gradient">In Seconds. Not Hours.</span>
+          </h1>
+
+          {/* Supporting Text */}
+          <p style={{ fontSize: '18px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '740px', margin: '0 auto 40px auto' }}>
+            Transform a simple product idea into a complete product specification with requirements, user flows, UI/UX, technology architecture, database design, security requirements, and AI-ready coding prompts.
+          </p>
+
+          {/* Primary & Secondary CTAs */}
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '24px' }}>
+            <button 
+              className="btn-primary" 
+              onClick={() => onNavigate('wizard')}
+              style={{ height: '52px', padding: '0 32px', fontSize: '16px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(91, 75, 255, 0.25)' }}
+            >
+              Create Your First PRD →
+            </button>
+            <a 
+              href="#how-it-works"
+              className="btn-secondary" 
+              style={{ height: '52px', padding: '0 28px', fontSize: '16px', borderRadius: '12px', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}
+            >
+              See How It Works
+            </a>
+          </div>
+
+          {/* Trust Text */}
+          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>
+            No credit card required · Start free · Built for founders, PMs, engineers & AI builders
+          </p>
         </div>
+      </section>
 
-        <h1 style={{ 
-          fontSize: 'clamp(36px, 5.5vw, 64px)', 
-          fontWeight: 800, 
-          letterSpacing: '-1.5px', 
-          lineHeight: 1.1,
-          marginBottom: '20px',
-          color: 'var(--text-primary)'
-        }}>
-          Turn Raw Product Ideas Into <br />
-          <span style={{ color: 'var(--primary)' }}>Developer-Ready Specs</span>
-        </h1>
+      {/* 7. HERO PRODUCT PREVIEW (SaaS Application Window Mockup) */}
+      <section className="container" style={{ maxWidth: '1140px', marginBottom: '120px' }}>
+        <div style={{ position: 'relative' }}>
+          
+          {/* Subtle Floating Badges around hero window */}
+          <div style={{ position: 'absolute', top: '-18px', left: '20px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', gap: '6px', zIndex: 10 }}>
+            <CheckCircle2 size={16} color="#10B981" /> 42 Requirements Generated
+          </div>
+          <div style={{ position: 'absolute', bottom: '-18px', right: '30px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', padding: '8px 16px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, boxShadow: 'var(--shadow-card)', display: 'flex', alignItems: 'center', gap: '6px', zIndex: 10 }}>
+            <Zap size={16} color="var(--accent-orange)" /> AI Build Prompt Ready
+          </div>
 
-        <p style={{ 
-          fontSize: '18px', 
-          color: 'var(--text-secondary)', 
-          lineHeight: 1.6, 
-          maxWidth: '750px',
-          margin: '0 auto 32px auto'
-        }}>
-          Generate 10 structured PRD sections, exact Next.js + Laravel 11 + MySQL database schemas, and AI coding prompts in 30 seconds.
-        </p>
-
-        <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '48px' }}>
-          <button className="btn-primary" onClick={() => onNavigate('wizard')} style={{ padding: '14px 28px', fontSize: '15px' }}>
-            Start Building Free <ArrowRight size={18} />
-          </button>
-          <button className="btn-secondary" onClick={() => onNavigate('dashboard')} style={{ padding: '14px 24px', fontSize: '15px' }}>
-            View Demo Dashboard
-          </button>
-        </div>
-
-        {/* Clean Interactive Product Window Showcase Mockup */}
-        <div className="saas-card" style={{ padding: 0, overflow: 'hidden', textAlign: 'left', borderRadius: '16px', boxShadow: 'var(--shadow-lg)' }}>
-          {/* Mockup Header */}
-          <div style={{ background: 'var(--bg-main)', borderBottom: '1px solid var(--border-color)', padding: '12px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              <div style={{ display: 'flex', gap: '6px' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444' }} />
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#F59E0B' }} />
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981' }} />
+          {/* Main Application Window */}
+          <div className="canvas-card" style={{ padding: '0', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 70px rgba(20, 20, 50, 0.12)', border: '1px solid var(--border-color)' }}>
+            
+            {/* Window Top Titlebar */}
+            <div style={{ background: 'var(--bg-main)', borderBottom: '1px solid var(--border-color)', padding: '14px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FF5F56', display: 'inline-block' }}></span>
+                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#FFBD2E', display: 'inline-block' }}></span>
+                <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27C93F', display: 'inline-block' }}></span>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)', marginLeft: '12px' }}>PRD Studio · AI Fitness Coach Spec</span>
               </div>
-              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>Online store with product — PRD Spec Package</div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ background: '#D1FAE5', color: '#065F46', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  ● PRD Generated
+                </span>
+                <span style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  Score: 96/100
+                </span>
+              </div>
             </div>
 
-            {/* Mockup Tabs */}
-            <div style={{ display: 'flex', gap: '8px' }}>
+            {/* Window Tabs Header */}
+            <div style={{ background: 'var(--bg-card)', borderBottom: '1px solid var(--border-color)', padding: '0 24px', display: 'flex', gap: '8px', overflowX: 'auto' }}>
               {[
-                { id: 'overview', label: 'Product Overview' },
-                { id: 'schema', label: 'MySQL Schema' },
-                { id: 'api', label: 'Laravel API' },
-                { id: 'prompt', label: 'AI Master Prompt' }
-              ].map(t => (
+                { id: 'prd', label: '📄 01 PRD (Requirements)' },
+                { id: 'trd', label: '⚙️ 02 TRD (Architecture)' },
+                { id: 'flow', label: '🔀 03 APP FLOW' },
+                { id: 'ui', label: '🎨 04 UI/UX (DESIGN.md)' },
+                { id: 'db', label: '🗄️ 05 DATABASE' },
+                { id: 'security', label: '🛡️ 06 SECURITY' }
+              ].map(tab => (
                 <button
-                  key={t.id}
-                  onClick={() => setActiveTab(t.id as any)}
+                  key={tab.id}
+                  onClick={() => setActiveTabPreview(tab.id)}
                   style={{
-                    padding: '4px 12px',
-                    borderRadius: '6px',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    background: activeTab === t.id ? 'var(--primary-light)' : 'transparent',
-                    color: activeTab === t.id ? 'var(--primary)' : 'var(--text-muted)'
+                    padding: '14px 18px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    border: 'none',
+                    background: 'transparent',
+                    borderBottom: activeTabPreview === tab.id ? '2px solid var(--primary)' : '2px solid transparent',
+                    color: activeTabPreview === tab.id ? 'var(--primary)' : 'var(--text-secondary)',
+                    cursor: 'pointer'
                   }}
                 >
-                  {t.label}
+                  {tab.label}
                 </button>
               ))}
             </div>
-          </div>
 
-          {/* Mockup Body Content */}
-          <div style={{ padding: '24px', fontFamily: activeTab === 'overview' ? 'inherit' : 'monospace', fontSize: '13px', lineHeight: 1.6, color: 'var(--text-primary)', minHeight: '180px' }}>
-            {activeTab === 'overview' && (
+            {/* Window Main Content Area */}
+            <div style={{ padding: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', background: 'var(--bg-card)' }}>
+              
+              {/* Left Column: Document Preview */}
               <div>
-                <h4 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Product Requirements Document – E-Commerce Store</h4>
-                <p style={{ color: 'var(--text-secondary)' }}>
-                  A production application featuring Next.js for frontend presentation, Laravel 11 API with Eloquent ORM for business logic, and MySQL (database: aiprd) for persistent data storage. Sub-second API response times and Google Stitch DESIGN.md system integration.
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>
+                  Project: AI Fitness Coach
+                </h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
+                  Complete production specification package generated for Next.js, Laravel 11 API, and MySQL (DB: aiprd).
                 </p>
-              </div>
-            )}
 
-            {activeTab === 'schema' && (
-              <pre style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)' }}>
-{`Table: users (id, name, email, password, phone, credits_remaining, plan)
-Table: projects (id, user_id, title, platform, tech_stack_json, status)
-Table: prd_documents (id, prd_id, user_id, title, platform_name, wizard_state_json, tech_tags_json, sections_json, master_prompt)`}
-              </pre>
-            )}
-
-            {activeTab === 'api' && (
-              <pre style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)' }}>
-{`POST /api/v1/auth/register -> { name, email, password } -> Sanctum Token
-POST /api/v1/prds/generate -> WizardState JSON -> { prd: PRDDocument }
-GET  /api/v1/prds/{id}     -> Return complete 10-section PRD package`}
-              </pre>
-            )}
-
-            {activeTab === 'prompt' && (
-              <pre style={{ whiteSpace: 'pre-wrap', color: 'var(--text-secondary)' }}>
-{`MASTER AI AGENT PROMPT – E-COMMERCE STORE
-Target Agents: Cursor, Claude Code, Antigravity, OpenCode, Windsurf
-Stack: Next.js (Frontend) + Laravel 11 (Backend API) + MySQL (DB: aiprd)
-Design System: Google Stitch DESIGN.md Tokens.`}
-              </pre>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Feature Grid */}
-      <section className="container" style={{ padding: '50px 0' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>
-            Engineered For Software Architecture
-          </h2>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>
-            From napkin sketches to production-ready database schemas and code prompts.
-          </p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
-          {[
-            { title: 'Next.js & Laravel 11 Stack', desc: 'Exact Next.js frontend presentation connected to Laravel Sanctum API controllers and MySQL database tables.', icon: <Cpu color="var(--primary)" size={24} /> },
-            { title: 'Google Stitch Design System', desc: 'Native integration with .stitch/DESIGN.md tokens, typography scales, color calibrations, and anti-slop rules.', icon: <Sparkles color="var(--primary)" size={24} /> },
-            { title: 'MySQL Database aiprd', desc: 'Auto-generated Eloquent models, MySQL migrations, foreign key constraints, and relational schemas.', icon: <Database color="var(--primary)" size={24} /> },
-            { title: 'Multi-Format Export', desc: '1-click download as Markdown (.md), PDF Document (.pdf), Structured JSON (.json), or Plain Text (.txt).', icon: <FileText color="var(--primary)" size={24} /> }
-          ].map((item, i) => (
-            <div key={i} className="saas-card" style={{ padding: '24px' }}>
-              <div style={{ marginBottom: '16px' }}>{item.icon}</div>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>{item.title}</h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="container" style={{ padding: '50px 0' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>
-            Simple, Transparent Pricing
-          </h2>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>1 PRD Package = 50 Credits. Upgrade anytime.</p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px' }}>
-          {pricingPlans.map((plan) => (
-            <div 
-              key={plan.id} 
-              className="saas-card" 
-              style={{ 
-                position: 'relative', 
-                border: plan.isPopular ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between'
-              }}
-            >
-              {plan.isPopular && (
-                <span style={{ 
-                  position: 'absolute', 
-                  top: '-12px', 
-                  right: '20px', 
-                  background: 'var(--primary)', 
-                  color: 'white', 
-                  fontSize: '11px', 
-                  fontWeight: 700, 
-                  padding: '3px 10px', 
-                  borderRadius: '12px', 
-                  textTransform: 'uppercase' 
-                }}>
-                  Most Popular
-                </span>
-              )}
-              <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '6px' }}>{plan.name}</h3>
-                <div style={{ fontSize: '32px', fontWeight: 800, marginBottom: '4px' }}>
-                  ₹{plan.priceINR} <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-muted)' }}>/ month</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', background: 'var(--bg-main)', padding: '20px', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>✓ Product Overview & Vision</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>✓ 42 Functional Requirements (P0 / P1)</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>✓ 18 Screen Wireframes & Route Map</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>✓ 31 MySQL Database Tables (Eloquent ORM)</div>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>✓ OWASP Security & Sanctum Token Auth</div>
                 </div>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
-                  {plan.credits / 50} PRDs / 30 days
-                </p>
+              </div>
 
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                  {plan.features.map((f, i) => (
-                    <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <CheckCircle2 size={15} color="var(--primary)" /> {f}
-                    </li>
+              {/* Right Column: Quality Score Breakdown Box */}
+              <div style={{ background: 'var(--bg-main)', padding: '24px', borderRadius: '20px', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-muted)' }}>PRD QUALITY SCORE</span>
+                  <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--primary)' }}>96 / 100</span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    { label: 'Product Requirements', pct: '98%' },
+                    { label: 'Technical Architecture', pct: '94%' },
+                    { label: 'UI/UX Specification', pct: '97%' },
+                    { label: 'Database Design', pct: '95%' },
+                    { label: 'Security & Auth', pct: '92%' }
+                  ].map((m, idx) => (
+                    <div key={idx}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                        <span>{m.label}</span>
+                        <span>{m.pct}</span>
+                      </div>
+                      <div style={{ width: '100%', height: '6px', background: 'var(--border-color)', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: m.pct, height: '100%', background: 'var(--primary)', borderRadius: '3px' }}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Window Footer Toolbar */}
+            <div style={{ background: 'var(--bg-main)', borderTop: '1px solid var(--border-color)', padding: '16px 32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Exportable as Markdown (.md), PDF (.pdf), and Master AI Prompt</span>
+              <button className="btn-primary" onClick={() => onNavigate('wizard')} style={{ padding: '8px 20px', fontSize: '13px' }}>
+                Ready to Build →
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 9. PRODUCT FLOW SECTION (Process Timeline 01 -> 02 -> 03 -> 04) */}
+      <section id="how-it-works" style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <div className="container" style={{ maxWidth: '1240px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            FROM IDEA TO IMPLEMENTATION
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '60px' }}>
+            One Idea. <span className="canvas-title-gradient">Everything Your Team Needs to Build.</span>
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '24px', textAlign: 'left', position: 'relative' }}>
+            {[
+              { num: '01', title: 'Describe', desc: 'Tell PRD Studio what you want to build in plain language.' },
+              { num: '02', title: 'Configure', desc: 'Choose your target platform, technology stack, style, and colors.' },
+              { num: '03', title: 'Generate', desc: 'AI analyzes your requirements and creates the 6-file specification package.' },
+              { num: '04', title: 'Build', desc: 'Export your PRD package or copy the Master AI prompt directly into your AI dev tool.' }
+            ].map((step, idx) => (
+              <div key={idx} className="canvas-card" style={{ padding: '32px', borderRadius: '20px', cursor: 'default' }}>
+                <div style={{ fontSize: '32px', fontWeight: 800, color: 'var(--primary)', marginBottom: '12px' }}>{step.num}</div>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{step.title}</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{step.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 10. PROBLEM SECTION (2 x 3 Grid) */}
+      <section style={{ padding: '100px 20px' }}>
+        <div className="container" style={{ maxWidth: '1240px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            BUILDING SOFTWARE SHOULD START WITH CLARITY
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '20px' }}>
+            Great Ideas Don't Fail Because They're Bad Ideas. <br />
+            <span className="canvas-title-gradient">They Fail Because They're Not Clearly Defined.</span>
+          </h2>
+
+          <p style={{ fontSize: '17px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '780px', margin: '0 auto 60px auto' }}>
+            A product idea is only the beginning. Before writing code, teams need to understand the product, users, features, workflows, interface, architecture, database, APIs, security, testing and deployment requirements.
+          </p>
+
+          {/* 2 x 3 Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '28px', textAlign: 'left' }}>
+            {[
+              { title: 'What are you building?', desc: 'Features, target personas, and core business requirements defined from scratch.' },
+              { title: 'Who will use it?', desc: 'User roles, permission scopes, and authentication session flows.' },
+              { title: 'How will users interact?', desc: 'Step-by-step application flows, screen journeys, and route mapping.' },
+              { title: 'How should it look?', desc: 'UI/UX component design system based on Google Stitch DESIGN.md tokens.' },
+              { title: 'How should it work?', desc: 'Next.js + Laravel 11 PHP API architecture and MySQL database design (DB: aiprd).' },
+              { title: 'What does "done" mean?', desc: 'Acceptance criteria, OWASP security protocols, testing, and AI build prompts.' }
+            ].map((prob, idx) => (
+              <div key={idx} className="canvas-card" style={{ padding: '32px', borderRadius: '20px', cursor: 'default' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: 'var(--primary-light)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <CheckCircle2 size={20} />
+                </div>
+                <h3 style={{ fontSize: '19px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{prob.title}</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{prob.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 11. SIX DELIVERABLES SECTION */}
+      <section style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <div className="container" style={{ maxWidth: '1240px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            ONE IDEA → SIX BUILD-READY DOCUMENTS
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '20px' }}>
+            Describe Your Idea. <span className="canvas-title-gradient">We Structure Everything Else.</span>
+          </h2>
+
+          <p style={{ fontSize: '17px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '780px', margin: '0 auto 60px auto' }}>
+            PRD Studio doesn't stop at a basic product requirements document. It creates a complete technical foundation for your application.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '28px', textAlign: 'left' }}>
+            {[
+              { num: '01 PRD', title: 'Product Requirements Document', desc: 'Complete product vision, target personas, P0/P1 feature specs, and user stories.', tags: ['Requirements', 'Features', 'User Stories'], icon: <FileText size={22} color="#3B82F6" /> },
+              { num: '02 TRD', title: 'Technical Requirements Document', desc: 'Next.js + Laravel 11 architecture, REST API route schemas, and caching rules.', tags: ['Architecture', 'APIs', 'Performance'], icon: <Cpu size={22} color="#8B5CF6" /> },
+              { num: '03 APP FLOW', title: 'Application Flow', desc: 'Interactive screen progression maps, navigation journeys, and state transitions.', tags: ['User Flows', 'Navigation', 'Logic'], icon: <GitBranch size={22} color="#10B981" /> },
+              { num: '04 UI/UX', title: 'UI/UX Specification', desc: 'Google Stitch DESIGN.md visual standards, typography, colors, and accessibility.', tags: ['Layouts', 'DESIGN.md', 'Tokens'], icon: <Palette size={22} color="#EC4899" /> },
+              { num: '05 DATABASE', title: 'Database Design', desc: 'MySQL relational schemas (DB: aiprd), tables, columns, indexes, and Eloquent models.', tags: ['Schemas', 'Relationships', 'Indexes'], icon: <Database size={22} color="#F59E0B" /> },
+              { num: '06 SECURITY', title: 'Security Specification', desc: 'Sanctum token auth, bcrypt password hashing, PDO SQL injection control, and audit logs.', tags: ['Auth', 'RBAC', 'OWASP'], icon: <Shield size={22} color="#6366F1" /> }
+            ].map((doc, idx) => (
+              <div key={idx} className="canvas-card" style={{ padding: '32px', borderRadius: '24px', cursor: 'default' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <div style={{ padding: '10px', borderRadius: '12px', background: 'var(--bg-main)', border: '1px solid var(--border-color)' }}>
+                    {doc.icon}
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--primary)' }}>{doc.num}</span>
+                </div>
+
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{doc.title}</h3>
+                <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>{doc.desc}</p>
+
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {doc.tags.map((tag, tIdx) => (
+                    <span key={tIdx} style={{ background: 'var(--primary-light)', color: 'var(--primary)', padding: '4px 10px', borderRadius: '8px', fontSize: '11px', fontWeight: 700 }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 13. BEFORE → AFTER TRANSFORMATION SECTION */}
+      <section style={{ padding: '100px 20px' }}>
+        <div className="container" style={{ maxWidth: '1100px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            FROM A THOUGHT TO A SPECIFICATION
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '60px' }}>
+            Start With One Sentence. <span className="canvas-title-gradient">Build With Complete Precision.</span>
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'center' }}>
+            {/* Left: Your Idea */}
+            <div className="canvas-card" style={{ padding: '36px', borderRadius: '24px', textAlign: 'left', cursor: 'default' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '14px' }}>YOUR IDEA</div>
+              <p style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', fontStyle: 'italic', lineHeight: 1.6 }}>
+                "I want to build an AI-powered fitness coach for busy professionals."
+              </p>
+            </div>
+
+            {/* Center: AI Transformation Badge */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'var(--primary-gradient)',
+                color: 'white',
+                padding: '14px 28px',
+                borderRadius: '24px',
+                fontWeight: 800,
+                fontSize: '14px',
+                boxShadow: '0 10px 25px rgba(91, 75, 255, 0.3)'
+              }}>
+                ✦ AI ANALYSIS ✦
+              </div>
+            </div>
+
+            {/* Right: PRD Studio Output */}
+            <div className="canvas-card" style={{ padding: '36px', borderRadius: '24px', textAlign: 'left', cursor: 'default', background: 'var(--primary-light)', border: '2px solid var(--primary)' }}>
+              <div style={{ fontSize: '12px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', marginBottom: '14px' }}>BUILD-READY OUTPUT</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                <div>✓ 42 Features</div>
+                <div>✓ 18 Screens</div>
+                <div>✓ 7 User Roles</div>
+                <div>✓ 31 DB Tables</div>
+                <div>✓ 48 API Routes</div>
+                <div>✓ UI System</div>
+                <div>✓ Security Specs</div>
+                <div>✓ 96/100 Quality</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 14 & 15. AI CODING TOOLS & AI PROMPT PREVIEW SECTION */}
+      <section style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+        <div className="container" style={{ maxWidth: '1100px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            BUILT FOR THE AI DEVELOPMENT ERA
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '20px' }}>
+            One Specification. <span className="canvas-title-gradient">Any AI Coding Tool.</span>
+          </h2>
+
+          <p style={{ fontSize: '17px', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '780px', margin: '0 auto 40px auto' }}>
+            Generate optimized implementation prompts for your favorite AI coding tools. Don't just plan your application—give your AI coding agent everything it needs to build it.
+          </p>
+
+          {/* Tool Badges Grid */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center', marginBottom: '50px' }}>
+            {['Antigravity', 'Claude Code', 'ChatGPT', 'Gemini', 'Cursor', 'Windsurf', 'Lovable', 'Bolt', 'Replit', 'v0', 'Codex', 'Custom AI Tools'].map((tool, idx) => (
+              <span key={idx} style={{ background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '10px 20px', borderRadius: '14px', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                ⚡ {tool}
+              </span>
+            ))}
+          </div>
+
+          {/* Monospace IDE Code Preview Box */}
+          <div className="canvas-card" style={{ maxWidth: '860px', margin: '0 auto', textAlign: 'left', padding: '28px', borderRadius: '24px', cursor: 'default' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Terminal size={20} color="var(--primary)" />
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>AI BUILD PROMPT</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Target: Antigravity / Cursor / Claude Code</div>
+                </div>
+              </div>
+              <button 
+                onClick={handleCopyDemoPrompt}
+                style={{ padding: '8px 18px', borderRadius: '10px', background: 'var(--primary)', color: 'white', fontSize: '13px', fontWeight: 700, border: 'none', cursor: 'pointer' }}
+              >
+                {copiedPrompt ? '✓ Copied Prompt' : 'Copy Prompt →'}
+              </button>
+            </div>
+
+            <pre style={{ background: '#0F172A', color: '#F8FAFC', padding: '20px', borderRadius: '14px', fontFamily: 'monospace', fontSize: '13px', lineHeight: 1.6, overflowX: 'auto', whiteSpace: 'pre-wrap' }}>
+{`MASTER 1-PROMPT AI AGENT INSTRUCTION – AI FITNESS COACH
+
+You are a senior full-stack engineer. Build the following application according to the provided product specification.
+
+Architecture: Next.js (Frontend) + Laravel 11 PHP API (Backend) + MySQL (DB: aiprd)
+Design: Google Stitch DESIGN.md tokens with Playfair Display typography.
+Features: 42 Features, 18 Screens, 7 User Roles, 31 Database Tables, 48 API Endpoints.
+Security: Sanctum token auth, bcrypt hashing, XSS & SQL injection controls.`}
+            </pre>
+          </div>
+        </div>
+      </section>
+
+      {/* 16. TRADITIONAL VS PRD STUDIO COMPARISON */}
+      <section style={{ padding: '100px 20px' }}>
+        <div className="container" style={{ maxWidth: '1000px', textAlign: 'center' }}>
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '50px' }}>
+            Stop Starting Every Project From a <span className="canvas-title-gradient">Blank Document.</span>
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '28px', textAlign: 'left' }}>
+            {/* Traditional Planning */}
+            <div className="canvas-card" style={{ padding: '36px', borderRadius: '24px', cursor: 'default' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '20px' }}>Traditional Planning</h3>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', color: 'var(--text-secondary)' }}>
+                <li>❌ Blank document paralysis</li>
+                <li>❌ Manual research & writing</li>
+                <li>❌ Fragmented technical notes</li>
+                <li>❌ Manually defined database schemas</li>
+                <li>❌ Easy to miss crucial security rules</li>
+                <li>❌ No AI-ready build prompts</li>
+              </ul>
+            </div>
+
+            {/* PRD Studio */}
+            <div className="canvas-card" style={{ padding: '36px', borderRadius: '24px', cursor: 'default', background: 'var(--primary-light)', border: '2px solid var(--primary)' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--primary)', marginBottom: '20px' }}>PRD Studio Engine</h3>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                <li>✓ Start with your raw idea</li>
+                <li>✓ AI-assisted structural analysis</li>
+                <li>✓ Unified 6-file specification suite</li>
+                <li>✓ Generated MySQL database schemas</li>
+                <li>✓ Built-in OWASP security controls</li>
+                <li>✓ 1-Click Master AI Agent Build Prompts</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 17 & 18. PRICING & CREDIT EXPLANATION SECTION */}
+      <section id="pricing" style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)' }}>
+        <div className="container" style={{ maxWidth: '1200px', textAlign: 'center' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            SIMPLE, TRANSPARENT PRICING
+          </div>
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 4.5vw, 52px)', marginBottom: '16px' }}>
+            Choose Your <span className="canvas-title-gradient">Plan</span>
+          </h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', marginBottom: '60px' }}>
+            Start free. Upgrade when your projects grow. No hidden fees. Cancel anytime.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px', textAlign: 'left', marginBottom: '40px' }}>
+            {[
+              { name: 'Free', price: '₹0', credits: '50 AI Credits / month', features: ['Basic PRD generation', 'Core templates', 'Markdown export', 'Basic editor'], popular: false },
+              { name: 'Starter', price: '₹49', credits: '150 AI Credits / month', features: ['Everything in Free', 'Advanced generation', 'PDF & DOCX export', 'More templates'], popular: false },
+              { name: 'Pro', price: '₹99', credits: '500 AI Credits / month', features: ['Everything in Starter', 'Full 6-file PRD suite', 'UI/UX & DESIGN.md', 'Database design', 'Security specs', 'AI coding prompts', 'Version history'], popular: true },
+              { name: 'Ultimate', price: '₹149', credits: '1,500 AI Credits / month', features: ['Everything in Pro', 'Highest limits', 'Priority generation', 'Unlimited saved projects', 'Advanced exports'], popular: false }
+            ].map((p, idx) => (
+              <div key={idx} className="canvas-card" style={{ padding: '32px', borderRadius: '24px', border: p.popular ? '2px solid var(--primary)' : '1px solid var(--border-color)', position: 'relative' }}>
+                {p.popular && (
+                  <span style={{ position: 'absolute', top: '-14px', right: '24px', background: 'var(--primary)', color: 'white', fontSize: '11px', fontWeight: 800, padding: '4px 12px', borderRadius: '12px', textTransform: 'uppercase' }}>
+                    MOST POPULAR
+                  </span>
+                )}
+                <h3 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)' }}>{p.name}</h3>
+                <div style={{ fontSize: '40px', fontWeight: 800, color: 'var(--text-primary)', margin: '12px 0' }}>{p.price} <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>/ month</span></div>
+                <div style={{ fontSize: '14px', fontWeight: 800, color: 'var(--primary)', marginBottom: '20px' }}>⚡ {p.credits}</div>
+                <button className={p.popular ? 'btn-primary' : 'btn-secondary'} onClick={() => onNavigate('wizard')} style={{ width: '100%', justifyContent: 'center', height: '44px', marginBottom: '20px', borderRadius: '10px' }}>
+                  {p.name === 'Free' ? 'Start Free' : `Choose ${p.name}`}
+                </button>
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                  {p.features.map((f, fIdx) => (
+                    <li key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>✓ {f}</li>
                   ))}
                 </ul>
               </div>
+            ))}
+          </div>
 
-              <button 
-                className={plan.isPopular ? 'btn-primary' : 'btn-secondary'} 
-                style={{ width: '100%', justifyContent: 'center' }}
-                onClick={() => {
-                  onSelectPlan(plan.name);
-                  onNavigate('upgrade');
-                }}
-              >
-                Get Started
+          <div style={{ background: 'var(--bg-main)', padding: '24px', borderRadius: '16px', border: '1px solid var(--border-color)', maxWidth: '680px', margin: '0 auto', fontSize: '14px', color: 'var(--text-secondary)' }}>
+            <strong style={{ color: 'var(--text-primary)' }}>How AI Credits Work:</strong> Credits are used when PRD Studio performs AI generation tasks (50 credits per 6-file PRD package generation, section regeneration, and prompt synthesis).
+          </div>
+        </div>
+      </section>
+
+      {/* 19. FAQ SECTION */}
+      <section id="faq" style={{ padding: '100px 20px' }}>
+        <div className="container" style={{ maxWidth: '820px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '50px' }}>
+            <h2 className="canvas-title" style={{ fontSize: '42px' }}>
+              Frequently Asked <span className="canvas-title-gradient">Questions</span>
+            </h2>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            {[
+              { q: 'What is PRD Studio?', a: 'PRD Studio is an AI-powered product planning platform that turns an idea into a structured, developer-ready specification.' },
+              { q: 'What does PRD Studio generate?', a: 'It generates 6 complete build-ready files: PRD, TRD, Application Flow, UI/UX specification, Database Design (MySQL aiprd), Security specification, and Master AI coding prompts.' },
+              { q: 'Do I need technical knowledge?', a: 'No. You can describe your idea in plain language and configure technical preferences when needed.' },
+              { q: 'Which technologies can I choose?', a: 'PRD Studio supports Next.js, React, Vue, Angular, Svelte, Node.js, Python, Laravel, Flutter, React Native, Electron, Tauri, MySQL, PostgreSQL, Supabase, and SQLite.' },
+              { q: 'Can I export my PRD?', a: 'Yes! Export formats include Markdown (.md), PDF Document (.pdf), JSON (.json), and Plain Text (.txt).' },
+              { q: 'Can I use the output with AI coding tools?', a: 'Yes. PRD Studio generates optimized master prompts for Antigravity, Claude Code, Cursor, Windsurf, ChatGPT, and Gemini.' },
+              { q: 'Can I edit the generated PRD?', a: 'Yes. Generated documents are editable section-by-section inside the built-in PRD Spec Inspector.' },
+              { q: 'How do AI credits work?', a: 'Generating a complete PRD package consumes 50 AI credits from your monthly credit allowance.' },
+              { q: 'Is my project private?', a: 'Yes. All project specifications are private and securely stored.' }
+            ].map((faq, idx) => (
+              <div key={idx} className="canvas-card" onClick={() => toggleFaq(idx)} style={{ padding: '20px 24px', borderRadius: '16px', cursor: 'pointer' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700, fontSize: '16px', color: 'var(--text-primary)' }}>
+                  <span>{faq.q}</span>
+                  {openFaq === idx ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </div>
+                {openFaq === idx && (
+                  <p style={{ marginTop: '14px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                    {faq.a}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 20. FINAL CTA */}
+      <section style={{ padding: '100px 20px', textAlign: 'center', background: 'var(--primary-light)', borderTop: '1px solid var(--border-hover)' }}>
+        <div className="container" style={{ maxWidth: '840px' }}>
+          <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
+            YOUR NEXT PRODUCT STARTS HERE
+          </div>
+
+          <h2 className="canvas-title" style={{ fontSize: 'clamp(36px, 5vw, 56px)', marginBottom: '20px' }}>
+            Your Idea Is Ready. <span className="canvas-title-gradient">Now Give It a Plan.</span>
+          </h2>
+
+          <p style={{ fontSize: '18px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '36px' }}>
+            Turn your idea into a complete, structured specification that your team — or your AI coding agent — can actually build from.
+          </p>
+
+          <button 
+            className="btn-primary" 
+            onClick={() => onNavigate('wizard')}
+            style={{ height: '52px', padding: '0 36px', fontSize: '16px', borderRadius: '12px', boxShadow: '0 10px 30px rgba(91, 75, 255, 0.3)' }}
+          >
+            Create Your First PRD →
+          </button>
+
+          <div style={{ marginTop: '18px', fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>
+            Start free. No credit card required.
+          </div>
+        </div>
+      </section>
+
+      {/* 21. LARGE SAAS FOOTER */}
+      <footer style={{ background: '#0F172A', color: '#F8FAFC', padding: '80px 20px 40px 20px' }}>
+        <div className="container" style={{ maxWidth: '1240px' }}>
+          
+          {/* Footer Top Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '40px', paddingBottom: '60px', borderBottom: '1px solid #1E293B' }}>
+            
+            {/* Brand Column */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Sparkles size={18} />
+                </div>
+                <span style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF' }}>PRD Studio</span>
+              </div>
+              <p style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.6, marginBottom: '20px' }}>
+                AI-powered product planning for modern software teams. From idea to build-ready specification in seconds.
+              </p>
+              <button className="btn-primary" onClick={() => onNavigate('wizard')} style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px' }}>
+                Create Your First PRD →
               </button>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* FAQ Accordion Section */}
-      <section className="container" style={{ padding: '50px 0', maxWidth: '800px' }}>
-        <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>Frequently Asked Questions</h2>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)' }}>Everything you need to know about PRD Studio.</p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {faqs.map((faq, index) => (
-            <div key={index} className="saas-card" style={{ padding: '20px', cursor: 'pointer' }} onClick={() => setOpenFaq(openFaq === index ? null : index)}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 600, fontSize: '15px' }}>
-                <span>{faq.q}</span>
-                {openFaq === index ? <ChevronUp size={18} color="var(--primary)" /> : <ChevronDown size={18} />}
-              </div>
-              {openFaq === index && (
-                <p style={{ marginTop: '12px', fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                  {faq.a}
-                </p>
-              )}
+            {/* Column 1: PRODUCT */}
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>PRODUCT</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
+                <li><a href="#features" style={{ color: 'inherit', textDecoration: 'none' }}>Features</a></li>
+                <li><a href="#how-it-works" style={{ color: 'inherit', textDecoration: 'none' }}>How It Works</a></li>
+                <li><a href="#ai-tools" style={{ color: 'inherit', textDecoration: 'none' }}>AI Tools</a></li>
+                <li><a href="#templates" style={{ color: 'inherit', textDecoration: 'none' }}>Templates</a></li>
+                <li><a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</a></li>
+              </ul>
             </div>
-          ))}
-        </div>
-      </section>
 
-      {/* Bottom CTA */}
-      <section className="container" style={{ padding: '40px 0' }}>
-        <div className="saas-card" style={{ 
-          background: 'var(--primary-light)', 
-          border: '1px solid rgba(37, 99, 235, 0.2)',
-          textAlign: 'center', 
-          padding: '48px 24px',
-          borderRadius: '20px'
-        }}>
-          <h2 style={{ fontSize: '28px', fontWeight: 800, marginBottom: '8px', color: 'var(--text-primary)' }}>
-            Start Building Production PRDs Today
-          </h2>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '24px', maxWidth: '600px', margin: '0 auto 24px auto' }}>
-            Turn your raw product concept into a developer-ready PRD package in under 30 seconds.
-          </p>
-          <button className="btn-primary" onClick={() => onNavigate('wizard')} style={{ padding: '14px 28px', fontSize: '15px' }}>
-            Generate Free PRD Now <ArrowRight size={18} />
-          </button>
+            {/* Column 2: RESOURCES */}
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>RESOURCES</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
+                <li>Documentation</li>
+                <li>Examples</li>
+                <li>Help Center</li>
+                <li>REST API</li>
+                <li>Blog</li>
+              </ul>
+            </div>
+
+            {/* Column 3: COMPANY */}
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>COMPANY</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
+                <li>About</li>
+                <li>Contact</li>
+                <li>Careers</li>
+                <li>Roadmap</li>
+                <li>Status</li>
+              </ul>
+            </div>
+
+            {/* Column 4: LEGAL */}
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>LEGAL</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
+                <li>Privacy Policy</li>
+                <li>Terms of Service</li>
+                <li>Cookie Policy</li>
+                <li>Security</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Footer Bottom Bar */}
+          <div style={{ paddingTop: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '13px', color: '#64748B' }}>
+            <div>© 2026 PRD Studio. All rights reserved.</div>
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <span>Privacy</span>
+              <span>Terms</span>
+              <span>Security</span>
+            </div>
+            <div>Secure • Developer-focused • AI-powered</div>
+          </div>
         </div>
-      </section>
+      </footer>
     </div>
   );
 };

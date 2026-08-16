@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { PRDDocument, UserProfile, ThemeMode } from './types/prd';
 import { 
   getSavedPRDs, savePRD, deletePRD, getUserProfile, 
-  saveUserProfile, addCredits, getSavedTheme, saveSavedTheme 
+  saveUserProfile, addCredits, getSavedTheme, saveSavedTheme,
+  isAuthenticated, logoutUser 
 } from './services/storageService';
+import { checkRouteAuth } from './middleware/authMiddleware';
 
 import { Navbar } from './components/Navbar';
 import { SidebarNav } from './components/SidebarNav';
 import { MenuModal } from './components/MenuModal';
-import { Footer } from './components/Footer';
 
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
@@ -18,63 +19,87 @@ import { PrdEditorPage } from './pages/PrdEditorPage';
 import { UpgradePage } from './pages/UpgradePage';
 import { AccountPage } from './pages/AccountPage';
 import { AboutPage } from './pages/AboutPage';
+import { TemplatesPage } from './pages/TemplatesPage';
+import { AiToolsPage } from './pages/AiToolsPage';
+import { DocumentationPage } from './pages/DocumentationPage';
 
 export function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<string>('dashboard');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
+  const [currentPage, setCurrentPage] = useState<string>(isAuthenticated() ? 'dashboard' : 'landing');
   const [user, setUser] = useState<UserProfile>(getUserProfile());
-  const [prds, setPrds] = useState<PRDDocument[]>(getSavedPRDs());
-  const [activePRD, setActivePRD] = useState<PRDDocument | null>(getSavedPRDs()[0] || null);
-  const [theme, setTheme] = useState<ThemeMode>(getSavedTheme());
+  const [prds, setPrds] = useState<PRDDocument[]>([]);
+  const [activePRD, setActivePRD] = useState<PRDDocument | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [theme, setTheme] = useState<ThemeMode>(getSavedTheme());
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
+    const loadedPrds = getSavedPRDs();
+    setPrds(loadedPrds);
+    if (loadedPrds.length > 0) {
+      setActivePRD(loadedPrds[0]);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
     saveSavedTheme(theme);
   }, [theme]);
 
   const handleToggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    saveSavedTheme(nextTheme);
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  const handleToggleSidebar = () => {
+    setIsSidebarCollapsed(prev => !prev);
   };
 
   const handleNavigate = (page: string) => {
-    setCurrentPage(page);
+    const authCheck = checkRouteAuth(page);
+    if (!authCheck.authorized) {
+      alert(authCheck.reason);
+      setCurrentPage(authCheck.redirectPage || 'login');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    setCurrentPage(authCheck.redirectPage || page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCompletePRD = (newPRD: PRDDocument) => {
+    savePRD(newPRD);
+    const updated = getSavedPRDs();
+    setPrds(updated);
+    setActivePRD(newPRD);
+    setUser(getUserProfile());
+    setCurrentPage('editor');
+  };
+
+  const handleSaveUpdatedPRD = (updatedPRD: PRDDocument) => {
+    savePRD(updatedPRD);
+    setPrds(getSavedPRDs());
+    setActivePRD(updatedPRD);
+  };
+
+  const handleDeletePRD = (id: string) => {
+    deletePRD(id);
+    const updated = getSavedPRDs();
+    setPrds(updated);
+    if (activePRD?.id === id) {
+      setActivePRD(updated.length > 0 ? updated[0] : null);
+    }
   };
 
   const handleOpenPRD = (prd: PRDDocument) => {
     setActivePRD(prd);
     setCurrentPage('editor');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleCompletePRD = (newPRD: PRDDocument) => {
-    const updatedPRDs = savePRD(newPRD);
-    setPrds(updatedPRDs);
-    setUser(getUserProfile());
-    setActivePRD(newPRD);
-    setCurrentPage('editor');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSaveUpdatedPRD = (updatedDoc: PRDDocument) => {
-    const updatedPRDs = savePRD(updatedDoc);
-    setPrds(updatedPRDs);
-    setActivePRD(updatedDoc);
-  };
-
-  const handleDeletePRD = (id: string) => {
-    const updatedPRDs = deletePRD(id);
-    setPrds(updatedPRDs);
-    if (activePRD?.id === id) {
-      setActivePRD(updatedPRDs[0] || null);
-    }
   };
 
   const handleUpgradeCredits = (credits: number, planName: 'Free' | 'Starter' | 'Pro' | 'Ultimate') => {
-    const updatedUser = addCredits(credits, planName);
-    setUser(updatedUser);
+    addCredits(credits, planName);
+    setUser(getUserProfile());
+    alert(`Successfully upgraded to ${planName}! ${credits} AI credits added.`);
+    setCurrentPage('dashboard');
   };
 
   const handleLoginSuccess = (newUser: UserProfile) => {
@@ -85,13 +110,13 @@ export function App() {
   };
 
   const handleSignOut = () => {
+    logoutUser();
     setIsLoggedIn(false);
     setCurrentPage('landing');
   };
 
-  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about'].includes(currentPage);
+  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about', 'templates', 'aitools', 'docs'].includes(currentPage);
 
-  // Safe PRD document for editor view
   const currentEditorPRD = activePRD || prds[0] || null;
 
   return (
@@ -107,7 +132,7 @@ export function App() {
 
       {isAppView ? (
         /* App Layout Grid with Left Sidebar */
-        <div className="app-layout-grid">
+        <div style={{ display: 'flex', minHeight: '100vh', width: '100%' }}>
           <SidebarNav
             user={user}
             theme={theme}
@@ -115,6 +140,8 @@ export function App() {
             onNavigate={handleNavigate}
             onSignOut={handleSignOut}
             activePage={currentPage}
+            isCollapsed={isSidebarCollapsed}
+            onToggleCollapse={handleToggleSidebar}
           />
 
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
@@ -127,6 +154,8 @@ export function App() {
               onNavigate={handleNavigate}
               onSignOut={handleSignOut}
               activePage={currentPage}
+              isSidebarCollapsed={isSidebarCollapsed}
+              onToggleSidebar={handleToggleSidebar}
             />
 
             <main style={{ flex: 1, padding: '20px 0' }}>
@@ -166,6 +195,18 @@ export function App() {
                 )
               )}
 
+              {currentPage === 'templates' && (
+                <TemplatesPage onNavigate={handleNavigate} />
+              )}
+
+              {currentPage === 'aitools' && (
+                <AiToolsPage onNavigate={handleNavigate} />
+              )}
+
+              {currentPage === 'docs' && (
+                <DocumentationPage />
+              )}
+
               {currentPage === 'upgrade' && (
                 <UpgradePage
                   user={user}
@@ -185,8 +226,6 @@ export function App() {
                 <AboutPage />
               )}
             </main>
-
-            <Footer onNavigate={handleNavigate} />
           </div>
         </div>
       ) : (
@@ -218,8 +257,6 @@ export function App() {
               />
             )}
           </main>
-
-          <Footer onNavigate={handleNavigate} />
         </div>
       )}
     </div>

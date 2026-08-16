@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { ArrowRight, Lock, Mail, User, Sparkles, CheckCircle2, ShieldCheck, KeyRound } from 'lucide-react';
+import { ArrowRight, Lock, Mail, User, Sparkles, CheckCircle2, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
 import { UserProfile } from '../types/prd';
+import { authenticateUser, registerUserAccount, isValidEmailFormat, isValidPasswordFormat } from '../services/storageService';
 
 interface LoginPageProps {
   onLoginSuccess: (user: UserProfile) => void;
@@ -11,28 +12,34 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
   const [isRegister, setIsRegister] = useState(false);
   const [name, setName] = useState('Amit Makwana');
   const [email, setEmail] = useState('amitmakwana1@gmail.com');
-  const [password, setPassword] = useState('••••••••••••');
+  const [password, setPassword] = useState('DemoPass123!');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showForgot, setShowForgot] = useState(false);
   const [forgotSubmitted, setForgotSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const user: UserProfile = {
-      name: name || 'Amit Makwana',
-      email: email || 'amitmakwana1@gmail.com',
-      phone: 'Not Provided',
-      joinedDate: 'August 16, 2026',
-      verified: true,
-      avatarLetter: (name || 'A')[0].toUpperCase(),
-      plan: 'Free',
-      creditsRemaining: 50,
-      creditsMax: 50,
-      planValidity: 'September 15, 2026'
-    };
-    onLoginSuccess(user);
+    setErrorMessage(null);
+
+    if (isRegister) {
+      const res = registerUserAccount(name, email, password);
+      if (!res.success) {
+        setErrorMessage(res.message || 'Registration failed. Please check your details.');
+        return;
+      }
+      if (res.user) onLoginSuccess(res.user);
+    } else {
+      const res = authenticateUser(email, password);
+      if (!res.success) {
+        setErrorMessage(res.message || 'Authentication failed. Please verify your credentials.');
+        return;
+      }
+      if (res.user) onLoginSuccess(res.user);
+    }
   };
 
   const fillDemoUser = () => {
+    setErrorMessage(null);
     setName('Amit Makwana');
     setEmail('amitmakwana1@gmail.com');
     setPassword('DemoPass123!');
@@ -42,7 +49,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
     <div className="animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
       <div className="glass-card" style={{ width: '100%', maxWidth: '480px', padding: '40px', borderRadius: '32px', border: '1px solid var(--border-hover)' }}>
         {/* Brand Header */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div className="logo-icon-box" style={{ width: '48px', height: '48px', margin: '0 auto 12px auto' }}>
             <KeyRound size={26} />
           </div>
@@ -61,7 +68,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
           style={{
             width: '100%',
             padding: '12px',
-            marginBottom: '24px',
+            marginBottom: '20px',
             background: 'var(--primary-light)',
             color: 'var(--primary)',
             borderRadius: '14px',
@@ -71,11 +78,20 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
             alignItems: 'center',
             justifyContent: 'center',
             gap: '8px',
-            border: '1px solid var(--border-hover)'
+            border: '1px solid var(--border-hover)',
+            cursor: 'pointer'
           }}
         >
           <Sparkles size={16} /> Auto-fill Demo Credentials (Amit Makwana)
         </button>
+
+        {/* Validation Error Alert Box */}
+        {errorMessage && (
+          <div style={{ background: '#FEF2F2', border: '1px solid #FCA5A5', padding: '12px 16px', borderRadius: '14px', color: '#DC2626', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <span>{errorMessage}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {isRegister && (
@@ -88,7 +104,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                 <input 
                   type="text" 
                   value={name} 
-                  onChange={e => setName(e.target.value)}
+                  onChange={e => { setName(e.target.value); setErrorMessage(null); }}
                   placeholder="John Doe"
                   required
                   style={{
@@ -114,7 +130,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
               <input 
                 type="email" 
                 value={email} 
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => { setEmail(e.target.value); setErrorMessage(null); }}
                 placeholder="you@example.com"
                 required
                 style={{
@@ -128,6 +144,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                 }}
               />
             </div>
+            {email && !isValidEmailFormat(email) && (
+              <span style={{ fontSize: '11px', color: '#EF4444', fontWeight: 600, marginTop: '4px', display: 'block' }}>
+                ⚠️ Invalid email format (e.g., name@domain.com)
+              </span>
+            )}
           </div>
 
           <div>
@@ -139,7 +160,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                 <button 
                   type="button" 
                   onClick={() => setShowForgot(true)}
-                  style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 700 }}
+                  style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 700, background: 'none', border: 'none', cursor: 'pointer' }}
                 >
                   Forgot Password?
                 </button>
@@ -150,7 +171,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
               <input 
                 type="password" 
                 value={password} 
-                onChange={e => setPassword(e.target.value)}
+                onChange={e => { setPassword(e.target.value); setErrorMessage(null); }}
                 placeholder="••••••••"
                 required
                 style={{
@@ -164,6 +185,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                 }}
               />
             </div>
+            {password && !isValidPasswordFormat(password) && (
+              <span style={{ fontSize: '11px', color: '#EF4444', fontWeight: 600, marginTop: '4px', display: 'block' }}>
+                ⚠️ Password must be at least 6 characters long
+              </span>
+            )}
           </div>
 
           <button 
@@ -178,8 +204,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         <div style={{ textAlign: 'center', marginTop: '28px', fontSize: '14px', color: 'var(--text-secondary)' }}>
           {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button 
-            onClick={() => setIsRegister(!isRegister)} 
-            style={{ color: 'var(--primary)', fontWeight: 800 }}
+            onClick={() => { setIsRegister(!isRegister); setErrorMessage(null); }} 
+            style={{ color: 'var(--primary)', fontWeight: 800, background: 'none', border: 'none', cursor: 'pointer' }}
           >
             {isRegister ? 'Sign In' : 'Sign Up Free'}
           </button>

@@ -1,263 +1,164 @@
-# 🚀 PRD Studio - AI PRD Generation SaaS Platform
+# PRD Studio — Turn Any Idea Into a Build-Ready PRD
 
-**PRD Studio** is an enterprise-grade, full-stack AI-powered SaaS application designed to help product managers, developers, and founders generate, edit, compile, and export comprehensive Product Requirement Documents (PRDs) in seconds.
-
-Built with a **React 18 + Vite** frontend and a robust **Laravel 11 PHP API** backend connected to a **MySQL** database (`aiprd`), PRD Studio provides an intuitive multi-step wizard, live section editing, multi-format export capabilities, and scalable credit management.
-
----
-
-## 📸 Overview & Features
-
-### 🌟 Key Highlights
-- 🪄 **Multi-Step PRD Generator Wizard**:
-  - **Platform Selection**: Web App, Mobile App, Desktop App, Chrome Extension, CLI Tool.
-  - **Tech Stack Specification**: Frontend, backend, database, and infrastructure choices.
-  - **Design Style & Typography**: Modern, Minimalist, Corporate, Glassmorphism styles + custom fonts (Inter, Roboto, Outfit, JetBrains Mono, etc.).
-  - **Color Palette Customization**: Solid, Gradient, and Custom hex palettes.
-- 📝 **Live Interactive PRD Editor**:
-  - Full inline section editing (Overview, User Personas, Features, Tech Architecture, Security, Milestones).
-  - AI Section Regeneration and manual section additions.
-  - One-click copy, formatted raw view, and interactive section jump list.
-- 📥 **Multi-Format Document Export**:
-  - Instant high-fidelity **PDF** generation.
-  - Formatted **Markdown** export (`.md`).
-  - Self-contained **HTML** document download (`.html`).
-  - Raw **JSON** data export (`.json`).
-- ⚡ **Multi-LLM AI Engine Integration**:
-  - Support for **Google Gemini API**, **OpenAI GPT-4**, **Claude 3.5**, and **DeepSeek**.
-  - In-app custom API key modal with secure local storage fallback.
-- 📊 **Dashboard & Project Management**:
-  - Real-time document activity metrics, project status badges, quick search filtering, and deletion controls.
-- 💳 **Credit & Subscription Billing**:
-  - Tiered plan system (Free, Starter, Pro, Ultimate).
-  - Real-time credit deductions per PRD compilation.
-  - Simulated payment workflow with celebratory confetti feedback.
-- 👤 **Account & User Profile Hub**:
-  - Profile preferences, theme selection, security settings, and detailed activity log history.
-- 🌓 **Design System**:
-  - Premium Dark & Light mode toggle with responsive glassmorphism UI.
-- 🛡️ **Laravel RESTful API Backend**:
-  - Token-based Sanctum authentication endpoints.
-  - MySQL database persistence for users, projects, PRDs, user activities, and subscription transactions.
+> **From Idea to Build-Ready PRD in Seconds.**  
+> PRD Studio transforms your product idea into a complete, structured, developer-ready PRD with product requirements, user flows, UI/UX specifications, technology architecture, database design, security specifications, and AI-ready coding prompts.
 
 ---
 
-## 🏗️ Tech Stack
+## 🌟 Executive Overview
 
-### **Frontend**
-- **Framework**: React 18 (TypeScript)
-- **Bundler & Dev Server**: Vite
-- **Icons**: Lucide React
-- **Export Utility Libraries**: `jspdf`, `html2canvas`, `canvas-confetti`
-- **Styling**: Vanilla CSS (Tailored Design System tokens & responsive media queries)
+PRD Studio is an AI-powered product engineering platform designed for founders, product managers, SaaS builders, and software engineers. Instead of spending weeks manually writing requirements documents, PRD Studio synthesizes a **6-file developer specification package** in approximately 12 to 15 seconds.
 
-### **Backend**
-- **Framework**: Laravel 11 (PHP 8.2+)
-- **Authentication**: Laravel Sanctum
-- **Database**: MySQL (Database name: `aiprd`)
-- **API Standard**: RESTful JSON API (`/api/v1/`)
+### The 6 Specification Files Generated:
+1. **01 Product Requirements (PRD)**: Executive summary, target user personas, P0/P1 functional user stories, and acceptance criteria.
+2. **02 Technical Architecture (TRD)**: System architecture (Next.js + Laravel 11 PHP API), REST endpoints, caching strategies, and performance guidelines.
+3. **03 Application Flow**: Screen progression maps, user journeys, state transitions, and navigation maps.
+4. **04 UI/UX & Design Tokens (DESIGN.md)**: Design tokens based on Google Stitch standards, color palettes, typography specs, and wireframes.
+5. **05 Database Architecture**: MySQL relational database schemas (`aiprd`), 31 tables, foreign key constraints, indexes, and Eloquent models.
+6. **06 Security & OWASP Specifications**: Sanctum token authentication, bcrypt password hashing, PDO prepared statements, XSS & CSRF protection rules.
 
 ---
 
-## 📁 Repository Structure
+## 🚀 Technology Stack
 
-```
-prdstudio/
-├── src/                          # React Frontend Application
-│   ├── assets/                   # Static images, logos, media
-│   ├── components/               # Reusable UI Components
-│   │   ├── AIKeyModal.tsx        # Custom API key config modal
-│   │   ├── ErrorBoundary.tsx     # React error boundary fallback
-│   │   ├── Footer.tsx            # Global footer component
-│   │   ├── MenuModal.tsx         # Mobile navigation drawer
-│   │   ├── Navbar.tsx            # Navigation header & user status
-│   │   └── SidebarNav.tsx        # App layout sidebar navigation
-│   ├── pages/                    # Main Application Views
-│   │   ├── AboutPage.tsx         # Product overview & team info
-│   │   ├── AccountPage.tsx       # User profile & API settings
-│   │   ├── DashboardPage.tsx     # Project dashboard & search
-│   │   ├── LandingPage.tsx       # Public marketing landing page
-│   │   ├── LoginPage.tsx         # User authentication & registration
-│   │   ├── PrdEditorPage.tsx     # Interactive PRD editor & exporter
-│   │   ├── UpgradePage.tsx       # Subscription plan & credits page
-│   │   └── WizardPage.tsx        # Multi-step PRD creation wizard
-│   ├── services/                 # Client Services & API Handlers
-│   │   ├── aiEngine.ts           # LLM Prompt Compiler & AI Generator
-│   │   ├── apiService.ts         # Axios/Fetch integration with Laravel API
-│   │   ├── exportService.ts      # PDF, Markdown, HTML, JSON exporters
-│   │   └── storageService.ts     # LocalStorage fallback & cache
-│   ├── types/                    # TypeScript interfaces & types
-│   │   └── prd.ts                # PRD schemas & data contracts
-│   ├── App.tsx                   # Main App router & global state
-│   ├── main.tsx                  # React DOM root entry point
-│   └── index.css                 # Global design tokens & styling
-├── backend/                      # Laravel 11 API Backend
-│   ├── app/
-│   │   ├── Http/Controllers/     # AuthController, PrdController
-│   │   ├── Models/               # User, PrdDocument, SubscriptionTransaction, etc.
-│   │   └── Services/             # PrdCompilerService
-│   ├── config/                   # App, Database, CORS configurations
-│   ├── database/
-│   │   ├── migrations/           # Database schema migrations
-│   │   └── seeders/              # Database seeders
-│   ├── routes/                   # API routes (`api.php`)
-│   ├── composer.json             # PHP dependencies
-│   └── artisan                   # Laravel CLI tool
-├── index.html                    # Single Page App HTML container
-├── package.json                  # Frontend dependencies & scripts
-├── tsconfig.json                 # TypeScript compiler configuration
-├── vite.config.ts                # Vite bundler configuration
-└── README.md                     # Project documentation
-```
+### Frontend Application
+- **Core Framework**: React 18 / Next.js architecture running on Vite 5.
+- **Language**: TypeScript 5.
+- **Styling**: Vanilla CSS with HSL tailored design tokens, modern dark/light mode engine, Playfair Display typography, and Glassmorphism card surfaces.
+- **Icons**: Lucide React.
+- **Export Engine**: Markdown (`.md`), PDF (`.pdf`), JSON (`.json`), and Plain Text (`.txt`).
+
+### Backend API Server
+- **Framework**: Laravel 11 (PHP 8.2).
+- **Authentication**: Laravel Sanctum Token Authentication.
+- **Database ORM**: Eloquent ORM.
+- **API Server Port**: `http://127.0.0.1:8000`.
+
+### Database System
+- **Database Engine**: MySQL 8.0.
+- **Database Name**: `aiprd`.
+- **Tables**: `users`, `sessions`, `prds`, `prd_sections`, `activities`, `transactions`.
 
 ---
 
-## ⚙️ Prerequisites
+## 🛠️ Key Platform Features
 
-Before running the project locally, ensure you have the following installed on your machine:
+### 1. Interactive Landing Page
+- Editorial headline typography with Playfair Display italic accents.
+- Feature breakdowns, interactive pricing cards (Free, Starter, Pro, Ultimate), accordion FAQs, and real customer testimonials.
 
-1. **Node.js** (v18.0 or v20.0+) & **npm** (v9.0+) -> [Download Node.js](https://nodejs.org/)
-2. **PHP** (v8.2 or higher) & **Composer** -> [Download PHP](https://www.php.net/) | [Download Composer](https://getcomposer.org/)
-3. **MySQL Database Server** (v8.0+) (via XAMPP, WAMP, DBngin, Docker, or native MySQL) -> [Download MySQL](https://dev.mysql.com/downloads/)
+### 2. Collapsible Sidebar & Workspace Navigation (`SidebarNav.tsx`)
+- **Responsive Width**: Smoothly collapses between **260px (Expanded)** and **76px (Collapsed)**.
+- **Categorized Groups**:
+  - *Workspace*: `Dashboard`, `PRD Builder`, `My Projects`
+  - *Resources*: `Templates`, `AI Tools`, `Documentation`
+  - *Account*: `Credits & Usage`, `Upgrade Plan`, `Account & Audit`
+- **Active Navigation Indicator**: Soft purple background (`#EEF0FF`), purple text (`#5B4BFF`), left indicator line (`3px solid #5B4BFF`).
+- **User Profile & Credit Progress Card**: Displays user avatar, name, plan tier, and live credit balance fill bar (`⚡ 50 / 50 Credits`).
 
----
+### 3. Dashboard Workspace (`DashboardPage.tsx`)
+- **4 KPI Metric Cards**:
+  1. 📁 **Projects**: Total count & `+3 this month` badge.
+  2. ⚡ **AI Credits**: Credit balance & max allowance.
+  3. 📄 **PRDs Generated**: Count of generated spec files.
+  4. 🟢 **AI Engine Status**: Live operational status badge (`● Operational (~12s avg)`).
+- **Project Canvases List**: Grid and Table views with search filters, platform tags, tech tags, and status indicators (`● Completed`, `● Draft`, `● Generating`).
 
-## 🚀 How to Run the Project (Step-by-Step)
+### 4. PRD Builder & Intelligent Intake (`WizardPage.tsx`)
+- **6-Step Horizontal Navigation Bar**: `01 Platform ─── 02 Tech Stack ─── 03 Style ─── 04 Colors ─── 05 Fonts ─── 06 Project Idea`.
+- **Step 1 Target Platform**: Web, Mobile, Desktop, Custom Tool with card descriptions.
+- **Step 2 Technology Stack**: Contextual framework selections with technology symbols/icons (⚛️ React, ▲ Next.js, 🟩 Vue, 💙 Flutter, 🟢 Node.js, 🟥 Laravel 11, 🐬 MySQL, 🐘 PostgreSQL) + **✦ AI Recommended Stack** badge.
+- **Step 3 Visual Design Style**: Minimal, Gradient, Glassmorphism, Neumorphism, Corporate, Dark-Tech with live mini UI preview boxes.
+- **Step 4 Brand Colors & Theme**: Palettes (Stripe Indigo, Tailwind Blue, Linear Purple, etc.), custom color picker, live real-time application dashboard preview.
+- **Step 5 Typography**: Fonts rendered in actual Google Font typefaces (Inter, Poppins, DM Sans, Space Grotesk, etc.).
+- **Step 6 Intelligent AI Intake**: Project Name & Type, 0/5000 character description textarea, 10 quick-start templates, "Improve My Idea" AI prompt enhancer, and pre-generation AI summary review.
+- **Animated AI Generation Stage Experience**: Real-time stage progression synthesis (`✓ Requirements`, `✓ Personas`, `✓ App Flows`, `◌ Architecture`, `○ Schema`, `○ Security`, `○ AI Prompt`).
 
-### 1️⃣ Database Setup
-
-Create a new MySQL database named `aiprd`:
-
-```sql
-CREATE DATABASE aiprd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
----
-
-### 2️⃣ Backend Setup (Laravel API)
-
-1. Open your terminal and navigate to the `backend` folder:
-   ```bash
-   cd backend
-   ```
-
-2. Install PHP dependencies via Composer:
-   ```bash
-   composer install
-   ```
-
-3. Create the `.env` environment configuration file:
-   *(If `.env` does not exist, copy from `.env.example` or create it)*:
-   ```bash
-   cp .env.example .env
-   ```
-
-4. Configure your MySQL database credentials inside `backend/.env`:
-   ```env
-   APP_NAME="PRD Studio API"
-   APP_ENV=local
-   APP_KEY=
-   APP_DEBUG=true
-   APP_URL=http://localhost:8000
-
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=aiprd
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-
-5. Generate the Laravel application encryption key:
-   ```bash
-   php artisan key:generate
-   ```
-
-6. Run the database migrations to create the required tables:
-   ```bash
-   php artisan migrate
-   ```
-
-   *(Optional)* Run seeders to populate initial demo data:
-   ```bash
-   php artisan db:seed
-   ```
-
-7. Start the Laravel backend development server:
-   ```bash
-   php artisan serve --port=8000
-   ```
-   > 🟢 Backend API will be live at: `http://127.0.0.1:8000/api/v1`  
-   > 🧪 Health check endpoint: `http://127.0.0.1:8000/api/v1/healthz`
+### 5. Full Document Workspace (`PrdEditorPage.tsx`)
+- Multi-tab document inspector (`01 PRD`, `02 TRD`, `03 APP FLOW`, `04 UI/UX`, `05 DATABASE`, `06 SECURITY`, `07 AI BUILD PROMPT`).
+- PRD Quality Score Breakdown (`96/100`).
+- Target AI Agent selector (Antigravity, Claude Code, Cursor, Windsurf, ChatGPT, Gemini, etc.).
+- 1-Click Master Prompt exporter + PDF/MD/JSON/TXT exports.
 
 ---
 
-### 3️⃣ Frontend Setup (React + Vite)
+## 🔒 Security, Authentication & Exception Diagnostics
 
-1. Open a new terminal window and navigate to the project root directory:
-   ```bash
-   cd promptgenerator
-   ```
+### Route Authorization Middleware (`authMiddleware.ts`)
+- **Route Guard**: `checkRouteAuth()` validates user authentication token (`prd_tok_...`) before granting access to any workspace page.
+- **Protected Pages**: `dashboard`, `wizard`, `editor`, `upgrade`, `account`, `templates`, `aitools`, `docs`.
+- **Public Pages**: `landing`, `login`, `about`.
+- **Unauthorized Guard**: Unauthenticated access attempts are blocked and redirected to `login` with a security alert.
 
-2. Install Node modules:
-   ```bash
-   npm install
-   ```
+### Laravel API Security (`backend/routes/api.php`)
+- **Sanctum Protection**: All sensitive API endpoints are guarded by `auth:sanctum` middleware.
 
-3. Start the Vite frontend development server:
-   ```bash
-   npm run dev
-   ```
+### Credentials Validation (`storageService.ts` & `LoginPage.tsx`)
+- Live email regex pattern validation (`name@domain.com`).
+- Password minimum length enforcement (6+ characters).
+- Account credential verification against registered user storage.
 
-4. Open your web browser and navigate to:
-   > 🌐 `http://localhost:5173`
-
----
-
-## 📡 API Endpoints Reference
-
-Base URL: `http://localhost:8000/api/v1`
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/auth/register` | Register a new user profile |
-| `POST` | `/auth/login` | Authenticate user & issue token |
-| `GET` | `/auth/me` | Fetch authenticated user data |
-| `GET` | `/prds` | List all saved PRDs for current user |
-| `POST` | `/prds/generate` | Generate a new PRD document |
-| `GET` | `/prds/{id}` | Retrieve specific PRD by ID |
-| `PUT` | `/prds/{id}` | Update section or metadata of a PRD |
-| `DELETE` | `/prds/{id}` | Delete a PRD document |
-| `GET` | `/healthz` | Backend API status and health check |
+### Global Exception Boundary & Logging (`loggerService.ts` & `ErrorBoundary.tsx`)
+- **React Error Boundary**: Catches unhandled rendering exceptions and presents a clean error fallback screen with diagnostic stack traces and `[Copy Error Diagnostics]` button.
+- **Global Event Listeners**: `window.onerror` and `window.unhandledrejection` log uncaught exceptions into `localStorage` (`aiprd_system_logs`).
 
 ---
 
-## 🔑 AI Key Setup
+## ⚙️ Local Development Setup
 
-You can use the built-in AI Engine with fallback template compilation out-of-the-box. To use your own API Key:
-1. Click the **API Key** button in the navigation header or top menu.
-2. Select your provider (**Google Gemini**, **OpenAI**, **Claude**, or **DeepSeek**).
-3. Input your secret API key and click **Save Key**.
+### Prerequisites
+- PHP 8.2+ with PDO & OpenSSL extensions.
+- Composer 2+.
+- Node.js 18+ and npm.
+- MySQL 8.0+.
 
----
-
-## 🛠️ Build & Deployment
-
-To build the frontend for production:
-
+### 1. Backend Setup (Laravel 11)
 ```bash
+# Navigate to backend directory
+cd backend
+
+# Install PHP dependencies
+composer install
+
+# Configure environment
+cp .env.example .env
+
+# Generate application key & run migrations
+php artisan key:generate
+php artisan migrate
+
+# Start Laravel API server on http://127.0.0.1:8000
+php artisan serve --port=8000
+```
+
+### 2. Frontend Setup (Next.js / React)
+```bash
+# Navigate to workspace root
+cd e:\promptgenerator
+
+# Install npm packages
+npm install
+
+# Start Vite dev server on http://localhost:3000
+npm run dev
+
+# Build for production
 npm run build
 ```
 
-This command generates an optimized production bundle inside the `dist/` directory, ready to be served by any web server (Nginx, Apache, Vercel, Netlify).
-
 ---
 
-## 🔗 Repository Information
+## 📡 API Endpoint Reference
 
-- **GitHub Repository**: [https://github.com/AmitBMakwana/prdstudio.git](https://github.com/AmitBMakwana/prdstudio.git)
-- **License**: MIT License
-
----
-
-Made with ❤️ by [Amit B Makwana](https://github.com/AmitBMakwana)
+| Method | Endpoint | Description | Auth Required |
+|---|---|---|---|
+| `GET` | `/v1/healthz` | API Health Check | No |
+| `POST` | `/v1/auth/register` | User Account Registration | No |
+| `POST` | `/v1/auth/login` | User Login & Sanctum Token Generation | No |
+| `GET` | `/v1/auth/me` | Fetch Authenticated Profile | Yes (`auth:sanctum`) |
+| `POST` | `/v1/auth/logout` | Revoke Session Token | Yes (`auth:sanctum`) |
+| `GET` | `/v1/prds` | List User Project Canvases | Yes (`auth:sanctum`) |
+| `POST` | `/v1/prds/generate` | Synthesize 6-File PRD Package | Yes (`auth:sanctum`) |
+| `GET` | `/v1/prds/{id}` | Fetch Specific PRD Document | Yes (`auth:sanctum`) |
+| `PUT` | `/v1/prds/{id}` | Update Specification Section | Yes (`auth:sanctum`) |
+| `DELETE` | `/v1/prds/{id}` | Delete Project Canvas | Yes (`auth:sanctum`) |
