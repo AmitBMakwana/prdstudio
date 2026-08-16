@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+backend/vendor/
+
+# Production Build
+dist/
+build/
+
+# Vite Timestamps & Cache
+*.timestamp-*.mjs
+.stitch/
+
+# Logs & Storage
+*.log
+backend/storage/logs/*
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# IDE / OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,239 @@
+I want to build full AI-Powered PRD Generation
+that can Turn any idea into a developer-ready PRD in seconds: structured specs, exact tech stack, design system, and AI-optimized output.
+
+Ready to Build
+AI Optimized
+Smart Parsing
+Code-Ready
+Instant Export
+
+and support to AI any tool
+
+
+
+
+
+existing system refrene : https://ybtshop.com/
+
+
+lending page
+login page
+
+side bar menu
+-dashboard
+-generated Prs
+-upgrade plan
+-account page
+-about
+-sign out
+
+
+dashboard
+===================
+-current packge detils,active plan details
+-list PRd generatd list that can access edit and export
+
+generated Prs
+===================
+6 stpes
+1-Platform select
+2-Tech Stack select
+3-Style select
+4-Colors & Theme select
+5-Choose a font
+6-Description
+
+1-Platform select
+	-webapp
+	-mobile app
+	-desktop app
+	-custome (browser extension,cli tool,game)
+
+2-Tech Stack select
+	webapp
+		-Frontend 
+			React
+			Next.js
+			Vue
+			Angular
+			Svelte
+			HTML/CSS/JS
+			PHP + HTML
+			WordPress 
+			Custom
+		-backend
+			Node.js
+			Python (Django/Flask)
+			Firebase Functions
+			Supabase
+			PHP
+			Ruby on Rails 
+			Custom
+		-databse
+			Firestore
+			Supabase
+			MongoDB
+			MySQL/SQL
+			PostgreSQL
+			SQLite
+			Custom
+	mobile app
+		-Frontend
+			Flutter
+			React Native
+			iOS Native (Swift)
+			Android Native (Kotlin)
+			Custom
+		-Backend + Database
+			Firebase
+			Supabase
+			Node.js + SQL
+			PHP + SQL
+			Custom
+	desktop app
+		-Frontend
+			Electron + React
+			Tauri
+			Flutter Desktop
+			.NET MAUI
+			Java (JavaFX)
+			Custom
+		-Backend + Database
+			Firebase
+			SQLite (local)
+			Node.js + SQL
+			
+3-Style select
+	Minimal
+	Gradient
+	Glassmorphism
+	Neumorphism
+	Corporate
+	Playful
+	Dark-Tech
+	Retro
+	Brutalist
+	Material
+	Flat
+	Custom
+	
+4-Colors & Theme select
+	color
+		Select a palette
+		Solid Colors
+			product color sample	
+			Spotify Dark
+			Stripe Indigo
+			Tailwind Blue
+			Vercel Black
+			Notion Gray
+			Linear Purple
+			Figma Rainbow
+			GitHub Dark
+			Slack Green
+			Discord Blue
+			Netflix Red
+			Instagram Pink
+			Twitter Blue
+			YouTube Red
+			Supabase Green
+			Framer Blue
+			Clerk Purple
+			Shadcn Dark
+		Gradient
+			Sunset
+			#F97316 → #EC4899
+
+			Ocean
+			#0EA5E9 → #14B8A6
+
+			Purple Dream
+			#8B5CF6 → #D946EF
+
+			Mint Fresh
+			#22C55E → #14B8A6
+		Custom
+			Pick your own colors
+			Primary
+			Mukhya brand rang
+			#F97316
+
+			Secondary
+			Support rang
+			#EC4899
+
+			Accent
+			Highlight / CTA
+			#F97316
+
+			Background
+			App/website ka background
+			#FFF7ED
+
+			Surface
+			Cards, Containers, Dialogs
+			#FFFFFF
+
+			Text
+			Sabhi mukhya text ke liye	
+	Theme support
+		light
+		dark
+		System (Both)
+
+5-Choose a font
+	Poppins
+	Geometric Sans
+	
+	Inter
+	Clean Sans
+
+	DM Sans
+	Modern Sans
+
+	Plus Jakarta Sans
+	Professional Sans
+
+	Space Grotesk
+	Tech Mono-Sans
+
+	Sora
+	Startup Sans
+
+	Manrope
+	Geometric Modern
+
+	Outfit
+	Display Sans
+
+	Lexend
+	Readability Sans
+
+	Urbanist
+	Geometric Clean
+
+	Custom font
+	Enter a Google Fonts name or CSS font-family value
+
+
+	
+	
+upgrade plan
+===================
+user can upgrade plan
+
+account
+===================
+-user profile detiils
+-active plan details
+
+
+
+about
+===================
+-developer information
+
+
+sign out
+===================
+sign out user
