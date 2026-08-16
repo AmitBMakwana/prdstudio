@@ -4,7 +4,7 @@ import { UserProfile } from '../types/prd';
 import { authenticateSuperAdmin } from '../services/adminService';
 
 interface AdminLoginPageProps {
-  onLoginSuccess: (user: UserProfile) => void;
+  onLoginSuccess: (user: UserProfile, targetRoute?: string) => void;
   onNavigate: (page: string) => void;
 }
 
@@ -25,7 +25,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onLoginSuccess, 
     }
 
     if (res.user) {
-      onLoginSuccess(res.user);
+      onLoginSuccess(res.user, 'admin');
       onNavigate('admin');
     }
   };

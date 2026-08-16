@@ -29,8 +29,14 @@ import { AdminLoginPage } from './pages/AdminLoginPage';
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
-  const [currentPage, setCurrentPage] = useState<string>(isAuthenticated() ? 'dashboard' : 'landing');
   const [user, setUser] = useState<UserProfile>(getUserProfile());
+  const [currentPage, setCurrentPage] = useState<string>(() => {
+    const loggedIn = isAuthenticated();
+    if (!loggedIn) return 'landing';
+    const profile = getUserProfile();
+    if (profile.role === 'superadmin') return 'admin';
+    return 'dashboard';
+  });
   const [prds, setPrds] = useState<PRDDocument[]>([]);
   const [activePRD, setActivePRD] = useState<PRDDocument | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -106,11 +112,17 @@ export function App() {
     setCurrentPage('dashboard');
   };
 
-  const handleLoginSuccess = (newUser: UserProfile) => {
+  const handleLoginSuccess = (newUser: UserProfile, targetRoute?: string) => {
     saveUserProfile(newUser);
     setUser(newUser);
     setIsLoggedIn(true);
-    setCurrentPage('dashboard');
+    if (targetRoute) {
+      setCurrentPage(targetRoute);
+    } else if (newUser.role === 'superadmin') {
+      setCurrentPage('admin');
+    } else {
+      setCurrentPage('dashboard');
+    }
   };
 
   const handleSignOut = () => {
