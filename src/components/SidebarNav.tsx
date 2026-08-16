@@ -32,22 +32,18 @@ export const SidebarNav: React.FC<SidebarNavProps> = ({
       group: 'Workspace',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'wizard', label: 'PRD Builder', icon: Wand2 },
-        { id: 'dashboard', label: 'My Projects', icon: FolderKanban }
+        { id: 'wizard', label: 'PRD Builder', icon: Wand2 }
       ]
     },
     {
       group: 'Resources',
       items: [
-        { id: 'templates', label: 'Templates', icon: Layout },
-        { id: 'aitools', label: 'AI Tools', icon: Sparkles },
-        { id: 'docs', label: 'Documentation', icon: Info }
+        { id: 'templates', label: 'Templates', icon: Layout }
       ]
     },
     {
       group: 'Account',
       items: [
-        { id: 'account', label: 'Credits & Usage', icon: CreditCard },
         { id: 'upgrade', label: 'Upgrade Plan', icon: Sparkles },
         { id: 'account', label: 'Account & Audit', icon: User }
       ]
