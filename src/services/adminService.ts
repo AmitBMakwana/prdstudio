@@ -6,6 +6,22 @@ const USERS_STORAGE_KEY = 'prd_studio_all_users_v1';
 // Initial Mock Registered Users List
 const INITIAL_USERS: UserProfile[] = [
   {
+    id: 'usr_000',
+    name: 'System SuperAdmin',
+    email: 'superadmin@prdstudio.io',
+    phone: '+1 (800) 555-SUPER',
+    joinedDate: '2026-01-01',
+    verified: true,
+    avatarLetter: 'S',
+    plan: 'Ultimate',
+    creditsRemaining: 99999,
+    creditsMax: 99999,
+    planValidity: '2030-01-01',
+    role: 'superadmin',
+    status: 'Active',
+    lastLogin: 'Just now'
+  },
+  {
     id: 'usr_001',
     name: 'Amit Makwana',
     email: 'amitmakwana1@gmail.com',
@@ -17,7 +33,7 @@ const INITIAL_USERS: UserProfile[] = [
     creditsRemaining: 450,
     creditsMax: 500,
     planValidity: '2027-01-15',
-    role: 'admin',
+    role: 'superadmin',
     status: 'Active',
     lastLogin: 'Just now'
   },
@@ -128,7 +144,7 @@ function saveUsersList(users: UserProfile[]): void {
 /**
  * Update user role (User <-> Admin)
  */
-export function updateUserRole(email: string, newRole: 'user' | 'admin'): UserProfile[] {
+export function updateUserRole(email: string, newRole: 'user' | 'admin' | 'superadmin'): UserProfile[] {
   const users = getRegisteredUsersList();
   const updated = users.map(u => {
     if (u.email.toLowerCase() === email.toLowerCase()) {
@@ -270,4 +286,41 @@ export function getAdminAnalyticsSummary(): AdminAnalyticsSummary {
     topTechStacks,
     recentSystemLogs: logs
   };
+}
+
+/**
+ * Authenticate SuperAdmin user from Database records
+ */
+export function authenticateSuperAdmin(emailInput: string, passwordInput: string): { success: boolean; message?: string; user?: UserProfile } {
+  const email = emailInput.trim().toLowerCase();
+  const password = passwordInput.trim();
+
+  if (!email || !password) {
+    return { success: false, message: 'Please enter SuperAdmin email and password.' };
+  }
+
+  const users = getRegisteredUsersList();
+  const foundUser = users.find(u => u.email.toLowerCase() === email);
+
+  if (!foundUser) {
+    return { success: false, message: 'SuperAdmin account not found in database registry.' };
+  }
+
+  if (foundUser.role !== 'superadmin' && foundUser.role !== 'admin') {
+    return { success: false, message: 'Access Denied: Your database account does not have SuperAdmin permissions.' };
+  }
+
+  if (foundUser.status === 'Suspended') {
+    return { success: false, message: 'Access Suspended: This SuperAdmin account has been deactivated.' };
+  }
+
+  // Update session & save user
+  const superUser: UserProfile = {
+    ...foundUser,
+    role: 'superadmin',
+    lastLogin: 'Just now'
+  };
+
+  saveUserProfile(superUser);
+  return { success: true, user: superUser };
 }

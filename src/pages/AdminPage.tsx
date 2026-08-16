@@ -41,7 +41,11 @@ export const AdminPage: React.FC<AdminPageProps> = ({ currentUser, onNavigate })
   };
 
   const handleRoleToggle = (user: UserProfile) => {
-    const targetRole = user.role === 'admin' ? 'user' : 'admin';
+    let targetRole: 'user' | 'admin' | 'superadmin' = 'superadmin';
+    if (user.role === 'superadmin') targetRole = 'admin';
+    else if (user.role === 'admin') targetRole = 'user';
+    else targetRole = 'superadmin';
+
     const updated = updateUserRole(user.email, targetRole);
     setUsers(updated);
     setAnalytics(getAdminAnalyticsSummary());

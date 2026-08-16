@@ -17,7 +17,8 @@ export const PUBLIC_ROUTES = [
   'login',
   'about',
   'legal',
-  'help'
+  'help',
+  'admin-login'
 ];
 
 export interface AuthCheckResult {
@@ -33,6 +34,15 @@ export interface AuthCheckResult {
  */
 export function checkRouteAuth(requestedPage: string): AuthCheckResult {
   const loggedIn = isAuthenticated();
+
+  if (requestedPage === 'admin' && !loggedIn) {
+    return {
+      authorized: false,
+      targetPage: requestedPage,
+      redirectPage: 'admin-login',
+      reason: 'SuperAdmin Authentication Required: Please log in via the SuperAdmin Portal.'
+    };
+  }
 
   // If user is trying to access a protected page without logging in
   if (PROTECTED_ROUTES.includes(requestedPage) && !loggedIn) {

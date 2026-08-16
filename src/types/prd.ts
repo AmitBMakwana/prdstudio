@@ -118,7 +118,7 @@ export interface UserProfile {
   creditsRemaining: number;
   creditsMax: number;
   planValidity: string;
-  role?: 'user' | 'admin';
+  role?: 'user' | 'admin' | 'superadmin';
   status?: 'Active' | 'Suspended';
   lastLogin?: string;
 }

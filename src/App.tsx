@@ -25,6 +25,7 @@ import { DocumentationPage } from './pages/DocumentationPage';
 import { LegalPage } from './pages/LegalPage';
 import { HelpPage } from './pages/HelpPage';
 import { AdminPage } from './pages/AdminPage';
+import { AdminLoginPage } from './pages/AdminLoginPage';
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
@@ -278,6 +279,13 @@ export function App() {
 
             {currentPage === 'help' && (
               <HelpPage onNavigate={handleNavigate} />
+            )}
+
+            {currentPage === 'admin-login' && (
+              <AdminLoginPage
+                onLoginSuccess={handleLoginSuccess}
+                onNavigate={handleNavigate}
+              />
             )}
           </main>
         </div>
