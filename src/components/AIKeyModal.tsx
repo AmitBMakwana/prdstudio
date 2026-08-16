@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Key, X, CheckCircle2, Cpu, HelpCircle, Shield } from 'lucide-react';
+import { Key, X, CheckCircle2, Cpu, HelpCircle, Shield, Eye, EyeOff } from 'lucide-react';
 
 interface AIKeyModalProps {
   isOpen: boolean;
@@ -9,6 +9,7 @@ interface AIKeyModalProps {
 export const AIKeyModal: React.FC<AIKeyModalProps> = ({ isOpen, onClose }) => {
   const [provider, setProvider] = useState<'builtin' | 'openai' | 'anthropic' | 'gemini'>('builtin');
   const [apiKey, setApiKey] = useState<string>('');
+  const [showKey, setShowKey] = useState<boolean>(false);
   const [savedSuccess, setSavedSuccess] = useState<boolean>(false);
 
   useEffect(() => {
@@ -99,21 +100,44 @@ export const AIKeyModal: React.FC<AIKeyModalProps> = ({ isOpen, onClose }) => {
             <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
               Enter {provider.toUpperCase()} API Key
             </label>
-            <input
-              type="password"
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
-              placeholder={provider === 'openai' ? 'sk-...' : provider === 'anthropic' ? 'sk-ant-...' : 'AIzaSy...'}
-              style={{
-                width: '100%',
-                padding: '12px',
-                borderRadius: '10px',
-                border: '1px solid var(--border-color)',
-                background: 'var(--bg-main)',
-                color: 'var(--text-primary)',
-                fontSize: '13px'
-              }}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showKey ? 'text' : 'password'}
+                value={apiKey}
+                onChange={e => setApiKey(e.target.value)}
+                placeholder={provider === 'openai' ? 'sk-...' : provider === 'anthropic' ? 'sk-ant-...' : 'AIzaSy...'}
+                autoComplete="off"
+                style={{
+                  width: '100%',
+                  padding: '12px 40px 12px 12px',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-color)',
+                  background: 'var(--bg-main)',
+                  color: 'var(--text-primary)',
+                  fontSize: '13px'
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey(!showKey)}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '12px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0
+                }}
+                title={showKey ? "Hide API Key" : "Show API Key"}
+              >
+                {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
             <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Shield size={12} /> Your key is stored securely in your local browser environment.
             </div>

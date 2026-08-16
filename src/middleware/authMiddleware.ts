@@ -14,7 +14,9 @@ export const PROTECTED_ROUTES = [
 export const PUBLIC_ROUTES = [
   'landing',
   'login',
-  'about'
+  'about',
+  'legal',
+  'help'
 ];
 
 export interface AuthCheckResult {

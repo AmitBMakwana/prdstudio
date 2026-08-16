@@ -239,8 +239,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onSelectPl
         </div>
       </section>
 
-      {/* 10. PROBLEM SECTION (2 x 3 Grid) */}
-      <section style={{ padding: '100px 20px' }}>
+      {/* 10. PROBLEM & FEATURES SECTION (2 x 3 Grid) */}
+      <section id="features" style={{ padding: '100px 20px' }}>
         <div className="container" style={{ maxWidth: '1240px', textAlign: 'center' }}>
           <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
             BUILDING SOFTWARE SHOULD START WITH CLARITY
@@ -277,8 +277,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onSelectPl
         </div>
       </section>
 
-      {/* 11. SIX DELIVERABLES SECTION */}
-      <section style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+      {/* 11. SIX DELIVERABLES & TEMPLATES SECTION */}
+      <section id="templates" style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container" style={{ maxWidth: '1240px', textAlign: 'center' }}>
           <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
             ONE IDEA → SIX BUILD-READY DOCUMENTS
@@ -382,7 +382,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigate, onSelectPl
       </section>
 
       {/* 14 & 15. AI CODING TOOLS & AI PROMPT PREVIEW SECTION */}
-      <section style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
+      <section id="ai-tools" style={{ padding: '100px 20px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container" style={{ maxWidth: '1100px', textAlign: 'center' }}>
           <div style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)', letterSpacing: '1px', marginBottom: '14px' }}>
             BUILT FOR THE AI DEVELOPMENT ERA
@@ -591,18 +591,25 @@ Security: Sanctum token auth, bcrypt hashing, XSS & SQL injection controls.`}
       <footer style={{ background: '#0F172A', color: '#F8FAFC', padding: '80px 20px 40px 20px' }}>
         <div className="container" style={{ maxWidth: '1240px' }}>
           
-          {/* Footer Top Row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '40px', paddingBottom: '60px', borderBottom: '1px solid #1E293B' }}>
+          {/* Footer Top Row - Explicit 5 Columns Single Row Design */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '2.2fr 1fr 1fr 1fr 1fr', 
+            gap: '24px', 
+            paddingBottom: '60px', 
+            borderBottom: '1px solid #1E293B',
+            alignItems: 'start'
+          }}>
             
             {/* Brand Column */}
-            <div>
+            <div style={{ paddingRight: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
                 <div style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Sparkles size={18} />
                 </div>
                 <span style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF' }}>PRD Studio</span>
               </div>
-              <p style={{ fontSize: '14px', color: '#94A3B8', lineHeight: 1.6, marginBottom: '20px' }}>
+              <p style={{ fontSize: '13px', color: '#94A3B8', lineHeight: 1.6, marginBottom: '20px' }}>
                 AI-powered product planning for modern software teams. From idea to build-ready specification in seconds.
               </p>
               <button className="btn-primary" onClick={() => onNavigate('wizard')} style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px' }}>
@@ -612,48 +619,48 @@ Security: Sanctum token auth, bcrypt hashing, XSS & SQL injection controls.`}
 
             {/* Column 1: PRODUCT */}
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>PRODUCT</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
-                <li><a href="#features" style={{ color: 'inherit', textDecoration: 'none' }}>Features</a></li>
-                <li><a href="#how-it-works" style={{ color: 'inherit', textDecoration: 'none' }}>How It Works</a></li>
-                <li><a href="#ai-tools" style={{ color: 'inherit', textDecoration: 'none' }}>AI Tools</a></li>
-                <li><a href="#templates" style={{ color: 'inherit', textDecoration: 'none' }}>Templates</a></li>
-                <li><a href="#pricing" style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</a></li>
+              <h4 style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>PRODUCT</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#CBD5E1' }}>
+                <li><a href="#features" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Features</a></li>
+                <li><a href="#how-it-works" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ color: 'inherit', textDecoration: 'none' }}>How It Works</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('aitools'); }} style={{ color: 'inherit', textDecoration: 'none' }}>AI Tools</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('templates'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Templates</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('upgrade'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Pricing</a></li>
               </ul>
             </div>
 
             {/* Column 2: RESOURCES */}
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>RESOURCES</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
-                <li>Documentation</li>
-                <li>Examples</li>
-                <li>Help Center</li>
-                <li>REST API</li>
-                <li>Blog</li>
+              <h4 style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>RESOURCES</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#CBD5E1' }}>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('docs'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Documentation</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('templates'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Examples</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('help'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Help Center</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('docs'); }} style={{ color: 'inherit', textDecoration: 'none' }}>REST API</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('docs'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Blog</a></li>
               </ul>
             </div>
 
             {/* Column 3: COMPANY */}
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>COMPANY</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
-                <li>About</li>
-                <li>Contact</li>
-                <li>Careers</li>
-                <li>Roadmap</li>
-                <li>Status</li>
+              <h4 style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>COMPANY</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#CBD5E1' }}>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} style={{ color: 'inherit', textDecoration: 'none' }}>About</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('help'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Contact</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('about'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Careers</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('docs'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Roadmap</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('help'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Status</a></li>
               </ul>
             </div>
 
             {/* Column 4: LEGAL */}
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>LEGAL</h4>
-              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: '#CBD5E1' }}>
-                <li>Privacy Policy</li>
-                <li>Terms of Service</li>
-                <li>Cookie Policy</li>
-                <li>Security</li>
+              <h4 style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: '#64748B', marginBottom: '16px', letterSpacing: '0.5px' }}>LEGAL</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#CBD5E1' }}>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('legal'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Privacy Policy</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('legal'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Terms of Service</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('legal'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Cookie Policy</a></li>
+                <li><a href="#" onClick={(e) => { e.preventDefault(); onNavigate('legal'); }} style={{ color: 'inherit', textDecoration: 'none' }}>Security</a></li>
               </ul>
             </div>
           </div>
@@ -662,9 +669,9 @@ Security: Sanctum token auth, bcrypt hashing, XSS & SQL injection controls.`}
           <div style={{ paddingTop: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', fontSize: '13px', color: '#64748B' }}>
             <div>© 2026 PRD Studio. All rights reserved.</div>
             <div style={{ display: 'flex', gap: '20px' }}>
-              <span>Privacy</span>
-              <span>Terms</span>
-              <span>Security</span>
+              <span onClick={() => onNavigate('legal')} style={{ cursor: 'pointer' }}>Privacy</span>
+              <span onClick={() => onNavigate('legal')} style={{ cursor: 'pointer' }}>Terms</span>
+              <span onClick={() => onNavigate('legal')} style={{ cursor: 'pointer' }}>Security</span>
             </div>
             <div>Secure • Developer-focused • AI-powered</div>
           </div>

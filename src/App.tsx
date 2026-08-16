@@ -22,6 +22,8 @@ import { AboutPage } from './pages/AboutPage';
 import { TemplatesPage } from './pages/TemplatesPage';
 import { AiToolsPage } from './pages/AiToolsPage';
 import { DocumentationPage } from './pages/DocumentationPage';
+import { LegalPage } from './pages/LegalPage';
+import { HelpPage } from './pages/HelpPage';
 
 export function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(isAuthenticated());
@@ -115,7 +117,7 @@ export function App() {
     setCurrentPage('landing');
   };
 
-  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about', 'templates', 'aitools', 'docs'].includes(currentPage);
+  const isAppView = isLoggedIn && ['dashboard', 'wizard', 'editor', 'upgrade', 'account', 'about', 'templates', 'aitools', 'docs', 'legal', 'help'].includes(currentPage);
 
   const currentEditorPRD = activePRD || prds[0] || null;
 
@@ -225,6 +227,14 @@ export function App() {
               {currentPage === 'about' && (
                 <AboutPage />
               )}
+
+              {currentPage === 'legal' && (
+                <LegalPage onNavigate={handleNavigate} />
+              )}
+
+              {currentPage === 'help' && (
+                <HelpPage onNavigate={handleNavigate} />
+              )}
             </main>
           </div>
         </div>
@@ -255,6 +265,14 @@ export function App() {
                 onLoginSuccess={handleLoginSuccess}
                 onNavigate={handleNavigate}
               />
+            )}
+
+            {currentPage === 'legal' && (
+              <LegalPage onNavigate={handleNavigate} />
+            )}
+
+            {currentPage === 'help' && (
+              <HelpPage onNavigate={handleNavigate} />
             )}
           </main>
         </div>

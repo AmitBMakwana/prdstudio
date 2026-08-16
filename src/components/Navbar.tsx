@@ -47,6 +47,19 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   };
 
+  const handleNavSection = (sectionId: string) => {
+    if (activePage !== 'landing') {
+      onNavigate('landing');
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className="saas-navbar">
       <div className="container saas-navbar-inner">
@@ -76,7 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              {/* Clean Active Page Title (Eliminating duplicate "PRD Studio >" text) */}
+              {/* Clean Active Page Title */}
               <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.3px' }}>
                 {getBreadcrumbLabel(activePage)}
               </div>
@@ -100,13 +113,13 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Public Desktop Navigation Links (Only shown when logged out) */}
         {!isLoggedIn && (
-          <div className="desktop-nav-links" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-            <a href="#features" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }}>Features</a>
-            <a href="#how-it-works" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>How It Works</a>
-            <a href="#ai-tools" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>AI Tools</a>
-            <a href="#templates" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Templates</a>
-            <a href="#pricing" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Pricing</a>
-            <a href="#faq" onClick={(e) => { e.preventDefault(); onNavigate('landing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>FAQ</a>
+          <div className="desktop-nav-links" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+            <a href="#features" onClick={(e) => { e.preventDefault(); handleNavSection('features'); }} style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-secondary)', textDecoration: 'none' }}>Features</a>
+            <a href="#how-it-works" onClick={(e) => { e.preventDefault(); handleNavSection('how-it-works'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>How It Works</a>
+            <a href="#ai-tools" onClick={(e) => { e.preventDefault(); handleNavSection('ai-tools'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>AI Tools</a>
+            <a href="#templates" onClick={(e) => { e.preventDefault(); handleNavSection('templates'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Templates</a>
+            <a href="#pricing" onClick={(e) => { e.preventDefault(); handleNavSection('pricing'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Pricing</a>
+            <a href="#faq" onClick={(e) => { e.preventDefault(); handleNavSection('faq'); }} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>FAQ</a>
           </div>
         )}
 
@@ -144,8 +157,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               {/* Dropdown Menu */}
               {showUserDropdown && (
                 <div 
-                  className="canvas-card"
-                  style={{ position: 'absolute', top: '48px', right: 0, width: '220px', padding: '8px', borderRadius: '14px', zIndex: 200, cursor: 'default' }}
+                  style={{ 
+                    position: 'absolute', 
+                    top: '48px', 
+                    right: 0, 
+                    width: '220px', 
+                    padding: '8px', 
+                    borderRadius: '16px', 
+                    zIndex: 200, 
+                    cursor: 'default',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-color)',
+                    boxShadow: 'var(--shadow-card)'
+                  }}
                 >
                   <div style={{ padding: '8px 10px 10px 10px', borderBottom: '1px solid var(--border-color)', marginBottom: '6px' }}>
                     <div style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)' }}>{user.name}</div>
@@ -155,14 +179,52 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                     <button 
                       onClick={() => { onNavigate('dashboard'); setShowUserDropdown(false); }} 
-                      style={{ width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: '13px', borderRadius: '8px', color: 'var(--text-primary)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '9px 12px', 
+                        textAlign: 'left', 
+                        fontSize: '13px', 
+                        borderRadius: '10px', 
+                        color: 'var(--text-primary)', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        outline: 'none', 
+                        boxShadow: 'none', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        fontWeight: 600,
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-card-hover)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <LayoutDashboard size={15} color="var(--primary)" /> Dashboard Workspace
                     </button>
 
                     <button 
                       onClick={() => { onNavigate('account'); setShowUserDropdown(false); }} 
-                      style={{ width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: '13px', borderRadius: '8px', color: 'var(--text-primary)', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 500 }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '9px 12px', 
+                        textAlign: 'left', 
+                        fontSize: '13px', 
+                        borderRadius: '10px', 
+                        color: 'var(--text-primary)', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        outline: 'none', 
+                        boxShadow: 'none', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px', 
+                        fontWeight: 600,
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--bg-card-hover)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <User size={15} color="var(--text-muted)" /> Account & Audit Logs
                     </button>
@@ -171,7 +233,26 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                     <button 
                       onClick={() => { onSignOut(); setShowUserDropdown(false); }} 
-                      style={{ width: '100%', padding: '8px 12px', textAlign: 'left', fontSize: '13px', borderRadius: '8px', color: '#EF4444', background: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}
+                      style={{ 
+                        width: '100%', 
+                        padding: '9px 12px', 
+                        textAlign: 'left', 
+                        fontSize: '13px', 
+                        borderRadius: '10px', 
+                        color: '#EF4444', 
+                        background: 'transparent', 
+                        border: 'none', 
+                        outline: 'none', 
+                        boxShadow: 'none', 
+                        cursor: 'pointer', 
+                        fontWeight: 600, 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.background = '#FEF2F2'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
                       <LogOut size={15} /> Sign Out
                     </button>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Lock, Mail, User, Sparkles, CheckCircle2, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
+import { ArrowRight, Lock, Mail, User, CheckCircle2, KeyRound, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { UserProfile } from '../types/prd';
 import { authenticateUser, registerUserAccount, isValidEmailFormat, isValidPasswordFormat } from '../services/storageService';
 
@@ -10,9 +10,10 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate }) => {
   const [isRegister, setIsRegister] = useState(false);
-  const [name, setName] = useState('Amit Makwana');
-  const [email, setEmail] = useState('amitmakwana1@gmail.com');
-  const [password, setPassword] = useState('DemoPass123!');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showForgot, setShowForgot] = useState(false);
   const [forgotSubmitted, setForgotSubmitted] = useState(false);
@@ -38,13 +39,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
     }
   };
 
-  const fillDemoUser = () => {
-    setErrorMessage(null);
-    setName('Amit Makwana');
-    setEmail('amitmakwana1@gmail.com');
-    setPassword('DemoPass123!');
-  };
-
   return (
     <div className="animate-fade-in" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
       <div className="glass-card" style={{ width: '100%', maxWidth: '480px', padding: '40px', borderRadius: '32px', border: '1px solid var(--border-hover)' }}>
@@ -60,30 +54,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
             {isRegister ? 'Sign up to start generating Next.js + Laravel PRDs' : 'Log in to manage your AI PRD Studio session'}
           </p>
         </div>
-
-        {/* Demo Auto-fill Quick Button */}
-        <button 
-          type="button" 
-          onClick={fillDemoUser}
-          style={{
-            width: '100%',
-            padding: '12px',
-            marginBottom: '20px',
-            background: 'var(--primary-light)',
-            color: 'var(--primary)',
-            borderRadius: '14px',
-            fontSize: '13px',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-            border: '1px solid var(--border-hover)',
-            cursor: 'pointer'
-          }}
-        >
-          <Sparkles size={16} /> Auto-fill Demo Credentials (Amit Makwana)
-        </button>
 
         {/* Validation Error Alert Box */}
         {errorMessage && (
@@ -107,6 +77,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                   onChange={e => { setName(e.target.value); setErrorMessage(null); }}
                   placeholder="John Doe"
                   required
+                  autoComplete="name"
                   style={{
                     width: '100%',
                     padding: '14px 14px 14px 44px',
@@ -133,6 +104,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                 onChange={e => { setEmail(e.target.value); setErrorMessage(null); }}
                 placeholder="you@example.com"
                 required
+                autoComplete="email"
                 style={{
                   width: '100%',
                   padding: '14px 14px 14px 44px',
@@ -169,14 +141,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
             <div style={{ position: 'relative' }}>
               <Lock size={18} style={{ position: 'absolute', left: '14px', top: '14px', color: 'var(--text-muted)' }} />
               <input 
-                type="password" 
+                type={showPassword ? 'text' : 'password'} 
                 value={password} 
                 onChange={e => { setPassword(e.target.value); setErrorMessage(null); }}
                 placeholder="••••••••"
                 required
+                autoComplete={isRegister ? "new-password" : "current-password"}
                 style={{
                   width: '100%',
-                  padding: '14px 14px 14px 44px',
+                  padding: '14px 44px 14px 44px',
                   borderRadius: '14px',
                   border: '1px solid var(--border-color)',
                   background: 'var(--bg-main)',
@@ -184,6 +157,26 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                   fontSize: '14px'
                 }}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '14px',
+                  top: '14px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 0
+                }}
+                title={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
             {password && !isValidPasswordFormat(password) && (
               <span style={{ fontSize: '11px', color: '#EF4444', fontWeight: 600, marginTop: '4px', display: 'block' }}>
